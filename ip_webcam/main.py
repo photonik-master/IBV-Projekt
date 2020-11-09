@@ -5,9 +5,22 @@ import matplotlib.pyplot as plt
 
 def get_IMAGE():
 
-    img = cv.imread('test.png', 0) # -1 Farbparameter
+    img = cv.imread('test.png', -1) # -1-Farbparameter
     img = img[33:412, 93:599]
-    ret, thresh1 = cv.threshold(img, 127, 255, cv.THRESH_BINARY)
+
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+
+    ret0, thresh0 = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
+    #ret1, thresh1 = cv.threshold(gray, 127, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
+    #gauss = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 115, 1)
+
+    kernel =np.ones((2, 2), np.uint8)
+    erosion = cv.erode(thresh0, kernel, iterations=1)
+    dilation = cv.dilate(thresh0, kernel, iterations=1)
+
+    erg = cv.dilate(erosion, kernel, iterations=1)
+
+    print(kernel)
 
     #cv2.line(img, (0, 0), (150, 150), (0, 255, 0), 10) #Linie
     #cv2.rectangle(img, (15, 25), (200, 150), (0, 250, 0), 5)   #Rechteck
@@ -23,11 +36,11 @@ def get_IMAGE():
     #cv.destroyAllWindows()
     #cv.imwrite('neu.png', img)
 
-    titel = ['Original', 'Binary']
-    bilder = [img, thresh1]
+    titel = ['Original', 'Gray', 'Binary', 'Erosion', 'Dilation', 'ERG']
+    bilder = [img, gray, thresh0, erosion, dilation, erg]
 
     for k, i in enumerate(bilder):
-        plt.subplot(1, 2, k+1)
+        plt.subplot(2, 3, k+1)
         plt.imshow(i, 'gray')
         plt.xticks([])
         plt.yticks([])
@@ -40,18 +53,31 @@ def get_VIDEO():
     cap = cv.VideoCapture(0)
 
     while True:
-        ret, frame = cap.read()
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        _, frame = cap.read()
+
+        # hue sat value
+        hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+        #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+        lower_col = np.array([30, 100, 100])
+        upper_col = np.array([330, 255, 255])
+
+        mask = cv.inRange(hsv, lower_col, upper_col)
+        res = cv.bitwise_and(frame, frame, mask=mask)
+
         cv.imshow('frame', frame)
-        cv.imshow('gray', gray)
+        cv.imshow('mask', mask)
+        cv.imshow('res', res)
+
+        #cv.imshow('gray', gray)
 
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
-    cap.release()
     cv.destroyAllWindows()
+    cap.release()
 
 if __name__ == '__main__':
     url = 'http://...'
-    get_IMAGE()
+    #get_IMAGE()
     get_VIDEO()
