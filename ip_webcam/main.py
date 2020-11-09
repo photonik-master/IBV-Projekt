@@ -75,7 +75,7 @@ def get_VIDEO():
         cv.imshow('frame', frame)
         cv.imshow('thresh', res1)
         #cv.imshow('mask', mask)
-        #cv.imshow('res', res)
+        cv.imshow('res', res)
 
         #cv.imshow('gray', gray)
 
