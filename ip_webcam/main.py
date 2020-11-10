@@ -55,26 +55,34 @@ def get_VIDEO():
     while True:
         _, frame = cap.read()
 
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        ret0, thresh0 = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
+        #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        #ret0, thresh0 = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
 
-        kernel = np.ones((2, 2), np.uint8)
-        erosion = cv.erode(thresh0, kernel, iterations=1)
-        res1 = cv.dilate(erosion, kernel, iterations=1)
+        #kernel = np.ones((2, 2), np.uint8)
+        #erosion = cv.erode(thresh0, kernel, iterations=1)
+        #res1 = cv.dilate(erosion, kernel, iterations=1)
 
         # hue sat value
         hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
         #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
-        lower_col = np.array([30, 100, 100])
-        upper_col = np.array([330, 255, 255])
+#        lower_col = np.array([30, 100, 100])
+#        upper_col = np.array([330, 255, 255])
+
+        lower_col = np.array([0, 50, 50])
+        upper_col = np.array([65, 255, 255])
 
         mask = cv.inRange(hsv, lower_col, upper_col)
+
+        #kernel = np.ones((2, 2), np.uint8)
+        #erosion = cv.erode(mask, kernel, iterations=1)
+        #mask_new = cv.dilate(erosion, kernel, iterations=1)
+
         res = cv.bitwise_and(frame, frame, mask=mask)
 
         cv.imshow('frame', frame)
-        cv.imshow('thresh', res1)
-        #cv.imshow('mask', mask)
+        #cv.imshow('thresh', res1)
+        cv.imshow('mask', mask)
         cv.imshow('res', res)
 
         #cv.imshow('gray', gray)
