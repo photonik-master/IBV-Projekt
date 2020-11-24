@@ -2,6 +2,7 @@ from urllib import request
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
+
 def get_IMAGE():
 
     img = cv.imread('test.png', -1) # -1-Farbparameter
