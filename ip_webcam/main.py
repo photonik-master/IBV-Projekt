@@ -95,5 +95,5 @@ def get_VIDEO():
 
 if __name__ == '__main__':
     url = 'http://...'
-    #get_IMAGE()
+    get_IMAGE()
     get_VIDEO()
