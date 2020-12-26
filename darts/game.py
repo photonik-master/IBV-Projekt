@@ -128,3 +128,6 @@ class Player:
         if self.score - self.turnTotal == 0:
             self.game.winner = self
             return True
+
+class Test:
+    pass
