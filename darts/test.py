@@ -85,7 +85,7 @@ def detectDartboard(IM):
     for i in range(len(contours)):
         print(len(contours[i]))
         if 500 < len(contours[i]) < 10000:
-            final = cv.drawContours(thresh, contours[i], -1, (0, 255, 0), 20)
+            final = cv.drawContours(IM, contours[i], -1, (0, 255, 0), 20)
         else:
             pass
 
