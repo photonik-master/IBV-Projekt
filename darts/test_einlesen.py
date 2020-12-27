@@ -37,3 +37,28 @@ def get_IMAGE(name, param):
     #cv.imshow('Bild', img)
     #cv.imwrite('neu.png', img)
     return img
+
+def get_VIDEO(pfad):
+
+    cap = cv.VideoCapture(pfad)
+
+    while (cap.isOpened()):
+
+        ret, frame = cap.read()
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+        name = 'frame'
+        cv.namedWindow(name, cv.WINDOW_NORMAL)
+        cv.moveWindow(name, 20, 20)
+        cv.resizeWindow(name, 600, 600)
+        cv.imshow('frame', gray)
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv.destroyAllWindows()
+
+
+if __name__ == '__main__':
+
+    get_VIDEO('/Users/alex/Workspace/git_repos/IBV-Projekt/Testvideos/271220/20201227_155616.mp4')
