@@ -94,6 +94,6 @@ def get_VIDEO():
     cap.release()
 
 if __name__ == '__main__':
-    url = 'http://...'
+    url = 'rtsp://ip:port/h264_ulaw.sdp'
     get_IMAGE()
     get_VIDEO()
