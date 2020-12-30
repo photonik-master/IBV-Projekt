@@ -40,12 +40,17 @@ def detectDartboard(IM):
                                           cv.RETR_LIST,
                                           cv.CHAIN_APPROX_NONE)
 
-    for i in range(len(contours)):
-        #print(len(contours[i]))
-        if 500 < len(contours[i]) < 10000:
-            final = cv.drawContours(IM, contours[i], -1, (0, 255, 0), 20)
-        else:
-            pass
+    final = cv.drawContours(IM, contours[0], -1, (0, 255, 0), 20)
+
+    x, y, w, h = cv.boundingRect(contours[0])
+    print(x, y, w, h)
+
+    # for i in range(len(contours)):
+    #     print(len(contours[i]))
+    #     if 500 < len(contours[i]) < 5000:
+    #         final = cv.drawContours(IM, contours[i], -1, (0, 255, 0), 20)
+    #     else:
+    #         pass
 
             # max_cont = -1
              # max_idx = 0
@@ -69,7 +74,7 @@ def detectDartboard(IM):
     #cv.imshow('Combine', combined)
     #cv.imshow('Closing', closing)
     #cv.imshow('Final', final)
-    return final, combined, thresh, closing, frame_threshed_red_new, frame_threshed_green_new
+    return final
 
 def computeDifference(grey1, grey2):
 
@@ -88,7 +93,7 @@ def computeDifference(grey1, grey2):
     diff = cv.subtract(grey2, grey1) + cv.subtract(grey1, grey2)
     ret2, dif_thred = cv.threshold(diff, 75, 255, cv.THRESH_BINARY)
 
-    return dif_thred, grey1, grey2, diff
+    return diff
 
 def get_IMAGE(name, param):
 
@@ -135,19 +140,25 @@ def get_VIDEO(pfad):
     while (cap.isOpened()):
 
         ret, frame = cap.read()
+        ret1, frame1 = cap.read()
         flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        im = detectDartboard(frame)
+        gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
+        flipped1 = cv.rotate(frame1, cv.ROTATE_90_CLOCKWISE)
+        gray1 = cv.cvtColor(flipped1, cv.COLOR_BGR2GRAY)
+
+        im = detectDartboard(flipped)
+        #im = computeDifference(gray, gray1)
 
         name = 'frame'
         cv.namedWindow(name, cv.WINDOW_NORMAL)
         cv.moveWindow(name, 20, 20)
         cv.resizeWindow(name, 600, 600)
-        cv.imshow('frame', flipped)
+        cv.imshow('frame', im)
+
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
     cap.release()
     cv.destroyAllWindows()
