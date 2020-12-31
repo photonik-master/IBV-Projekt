@@ -4,8 +4,8 @@ import numpy as np
 import schedule
 import serial
 
-
 def detectDartboard(IM):
+
     #IM gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     IM_blur = cv.medianBlur(IM, 5)
     # convert to HSV
@@ -162,8 +162,12 @@ def get_VIDEO(pfad):
     cv.destroyAllWindows()
 
 def get_frame():
+
     cap = cv.VideoCapture(0)
+
     ret, frame = cap.read()
+
+
     cap.release()
 
     return frame
@@ -178,6 +182,7 @@ def detectshot():
     decoded_values = str(arduino_data[0:len(arduino_data)].decode("utf-8"))
 
     if '1' in decoded_values:
+
         frame = get_frame()
 
     elif '2' in decoded_values:
@@ -200,8 +205,7 @@ if __name__ == '__main__':
     print('Program started')
 
     # Setting up the Arduino
-    a = schedule.every(0.5).seconds.do(job)
-    print(a)
+    schedule.every(0.5).seconds.do(job)
 
     while True:
         schedule.run_pending()
