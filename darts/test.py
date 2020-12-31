@@ -1,6 +1,9 @@
 import cv2 as cv
 import time
 import numpy as np
+import schedule
+import serial
+
 
 def detectDartboard(IM):
     #IM gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -40,17 +43,12 @@ def detectDartboard(IM):
                                           cv.RETR_LIST,
                                           cv.CHAIN_APPROX_NONE)
 
-    final = cv.drawContours(IM, contours[0], -1, (0, 255, 0), 20)
-
-    x, y, w, h = cv.boundingRect(contours[0])
-    print(x, y, w, h)
-
-    # for i in range(len(contours)):
-    #     print(len(contours[i]))
-    #     if 500 < len(contours[i]) < 5000:
-    #         final = cv.drawContours(IM, contours[i], -1, (0, 255, 0), 20)
-    #     else:
-    #         pass
+    for i in range(len(contours)):
+        print(len(contours[i]))
+        if 500 < len(contours[i]) < 10000:
+            final = cv.drawContours(IM, contours[i], -1, (0, 255, 0), 20)
+        else:
+            pass
 
             # max_cont = -1
              # max_idx = 0
@@ -74,7 +72,7 @@ def detectDartboard(IM):
     #cv.imshow('Combine', combined)
     #cv.imshow('Closing', closing)
     #cv.imshow('Final', final)
-    return final
+    return combined
 
 def computeDifference(grey1, grey2):
 
@@ -93,7 +91,7 @@ def computeDifference(grey1, grey2):
     diff = cv.subtract(grey2, grey1) + cv.subtract(grey1, grey2)
     ret2, dif_thred = cv.threshold(diff, 75, 255, cv.THRESH_BINARY)
 
-    return diff
+    return dif_thred
 
 def get_IMAGE(name, param):
 
@@ -153,7 +151,7 @@ def get_VIDEO(pfad):
         cv.namedWindow(name, cv.WINDOW_NORMAL)
         cv.moveWindow(name, 20, 20)
         cv.resizeWindow(name, 600, 600)
-        cv.imshow('frame', im)
+        cv.imshow('frame', flipped)
 
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
@@ -163,11 +161,75 @@ def get_VIDEO(pfad):
     cap.release()
     cv.destroyAllWindows()
 
+def get_frame():
+    cap = cv.VideoCapture(0)
+    ret, frame = cap.read()
+    cap.release()
+
+    return frame
+
+def detectshot():
+
+    arduino = serial.Serial('com12', 9600)
+    print('Openconnection to Arduino')
+    print('')
+    arduino_data = arduino.readline()
+    print(arduino_data)
+    decoded_values = str(arduino_data[0:len(arduino_data)].decode("utf-8"))
+
+    if '1' in decoded_values:
+        frame = get_frame()
+
+    elif '2' in decoded_values:
+        frame = get_frame()
+
+    else:
+        pass
+
+    arduino_data = 0
+
+    arduino.close()
+    print('Connection closed')
+    return frame
+
+def job():
+    return detectshot()
+
 if __name__ == '__main__':
 
-    get_VIDEO('/Users/alex/Workspace/git_repos/IBV-Projekt/Testvideos/271220/20201227_160730.mp4')
+    print('Program started')
+
+    # Setting up the Arduino
+    a = schedule.every(0.5).seconds.do(job)
+    print(a)
+
+    while True:
+        schedule.run_pending()
+        #time.sleep()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #get_VIDEO('/Users/alex/Workspace/git_repos/IBV-Projekt/Testvideos/271220/20201227_155744.mp4')
 
     # bild1 = test_einlesen.get_IMAGE('bilder/20201208_141922.jpg', 0)
     # bild2 = test_einlesen.get_IMAGE('bilder/20201208_141923.jpg', 0)
