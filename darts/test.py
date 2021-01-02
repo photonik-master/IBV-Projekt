@@ -240,8 +240,102 @@ def detectshot():
 def job():
     return detectshot()
 
-if __name__ == '__main__':
+def detect_arrow(img1, img2):
 
+    # color correction - matplotlib and cv2 use different channels
+    img1, img2 = cv.cvtColor(img1, cv.COLOR_BGR2RGB), cv.cvtColor(img2, cv.COLOR_BGR2RGB)
+
+
+    new_img = corrected(img2, img1)
+    #
+    # if new_img is not False:
+    #     view_image(new_img, 'corr')
+
+    diff = cv.absdiff(img1, new_img)
+
+    height, width, channels = diff.shape
+    print(width)
+    print(height)
+    print(channels)
+
+    grayscaled = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
+    blur = cv.medianBlur(grayscaled, 5)
+    retval, th = cv.threshold(blur, 12, 255, cv.THRESH_BINARY)
+
+    # blank = np.zeros(shape=[height, width, 3], dtype=np.uint8)
+
+    kernel = np.ones((5, 5), np.uint8)
+    erosion = cv.erode(th, kernel, iterations=1)
+    new = cv.dilate(erosion, kernel, iterations=1)
+
+    kernel = np.ones((5, 5), np.uint8)
+    closing = cv.morphologyEx(new, cv.MORPH_CLOSE, kernel)
+
+    contours, hierarchy = cv.findContours(closing.copy(),
+                                          cv.RETR_LIST,
+                                          cv.CHAIN_APPROX_NONE)
+
+    img_detected = img2.copy()
+    img10 = img2.copy()
+    for i in range(len(contours)):
+        if 700 < len(contours[i]) < 5000:
+            print('##############')
+            print(len(contours[i]))
+            erg = contours[i]
+
+            img_contour = cv.drawContours(img2, contours[i], -1, (0, 255, 0), 5)
+
+            a = erg.min(axis=0)
+            b = np.where(erg == a[0][0])
+            c = list(zip(b[0], b[1], b[2]))
+
+            img_detected = img2.copy()
+            for cord in c:
+                if cord[2] == 0:
+                    print(cord)
+                    print(erg[cord[0], cord[1], 0])
+                    print(erg[cord[0], cord[1], 1])
+
+                    img_contour = cv.drawMarker(img2, (erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]), color=(0, 0, 255), markerType=cv.MARKER_CROSS, thickness=10)
+
+            # rows, cols = img2.shape[:2]
+            # [vx, vy, x, y] = cv.fitLine(contours[i], cv.DIST_L2, 0, 0.01, 0.01)
+            # slope = -float(vy) / float(vx)  # slope of the line
+            # lefty = int((x * slope) + y)
+            # righty = int(((x - cols) * slope) + y)
+            # cv.line(img_detected, (cols - 1, righty), (0, lefty), (0, 255, 0), 5)
+
+            # text1 = 'Aspect Ration: ' + str(round(aspect_ratio, 4))
+            # text2 = 'Extent:  ' + str(round(extent, 4))
+            # text3 = 'Solidity: ' + str(round(solidity, 4))
+            # cv2.putText(img1, text1, (10, 30), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA, 0)
+            # cv2.putText(img1, text2, (10, 60), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA, 0)
+            # cv2.putText(img1, text3, (10, 90), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA, 0)
+
+            # x, y, w, h = cv.boundingRect(contours[i])
+            # area = cv.contourArea(contours[i])
+            # Aspect_ratio = float(w) / h  # aspect ratio
+            # rect_area = w * h
+            # Extent = float(area) / rect_area
+            # hull = cv.convexHull(contours[i])
+            # hull_area = cv.contourArea(hull)
+            # Solidity = float(area) / hull_area
+            # cv.rectangle(img_detected, (x, y), (x + w, y + h), (0, 255, 0), 10)
+
+            # text1 = 'Aspect Ration: ' + str(round(aspect_ratio, 4))
+            # text2 = 'Extent:  ' + str(round(extent, 4))
+            # text3 = 'Solidity: ' + str(round(solidity, 4))
+            # cv2.putText(img1, text1, (10, 30), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA, 0)
+            # cv2.putText(img1, text2, (10, 60), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA, 0)
+            # cv2.putText(img1, text3, (10, 90), font, 0.5, (0, 255, 0), 1, cv2.LINE_AA, 0)
+
+        else:
+            pass
+
+    return diff, img_contour, img_detected
+
+
+if __name__ == '__main__':
 
     ############################################# Test Arduino
 
@@ -255,30 +349,20 @@ if __name__ == '__main__':
 
     ############################################# Test correct() / absdiff()
 
-    img1 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/20201208_141922.jpg', 0)
-    img2 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/20201208_141926.jpg', 0)
-    # color correction - matplotlib and cv2 use different channels
-    img1, img2 = cv.cvtColor(img1, cv.COLOR_BGR2RGB), cv.cvtColor(img2, cv.COLOR_BGR2RGB)
+    img1 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_11.png', 0)
+    img2 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_12.png', 0)
 
-    view_image(img1, 'Bild1')
-    view_image(img2, 'Bild2')
+    diff, contour, img_detected = detect_arrow(img1, img2)
 
-    new_img = corrected(img2, img1)
-
-    if new_img is not False:
-        view_image(new_img, 'corr')
-    diff = cv.absdiff(img1, new_img)
-    view_image(diff, 'diff')
+    #view_image(th, 'th')
+    #view_image(new, 'new')
+    #view_image(blank, 'blank')
+    #view_image(diff, 'Differenzbid')
+    view_image(contour, 'Konturbild')
+    view_image(img_detected, 'Detektierung')
 
     cv.waitKey(0)
     cv.destroyAllWindows()
-
-
-
-
-
-
-
 
     #get_VIDEO('/Users/alex/Workspace/git_repos/IBV-Projekt/Testvideos/271220/20201227_155744.mp4')
 
