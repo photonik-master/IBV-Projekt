@@ -223,10 +223,10 @@ def detectshot():
 
     if '1' in decoded_values:
 
-        frame = get_frame()
+        im1 = get_frame()
 
     elif '2' in decoded_values:
-        frame = get_frame()
+        im2 = get_frame()
 
     else:
         pass
@@ -235,10 +235,19 @@ def detectshot():
 
     arduino.close()
     print('Connection closed')
-    return frame
+    return im1, im2
 
 def job():
-    return detectshot()
+
+    im1, im2 = detectshot()
+
+    diff, contour, img_detected = detect_arrow(img1, img2)
+
+    view_image(contour, 'Konturbild')
+    view_image(img_detected, 'Detektierung')
+
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
 def detect_arrow(img1, img2):
 
@@ -339,30 +348,30 @@ if __name__ == '__main__':
 
     ############################################# Test Arduino
 
-    # print('Program started')
-    #
-    # # Setting up the Arduino
-    # schedule.every(0.5).seconds.do(job)
-    #
-    # while True:
-    #     schedule.run_pending()
+    print('Program started')
+
+    # Setting up the Arduino
+    schedule.every(0.5).seconds.do(job)
+
+    while True:
+        schedule.run_pending()
 
     ############################################# Test correct() / absdiff()
 
-    img1 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_11.png', 0)
-    img2 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_12.png', 0)
+    #img1 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_11.png', 0)
+    #img2 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_12.png', 0)
 
-    diff, contour, img_detected = detect_arrow(img1, img2)
+    #diff, contour, img_detected = detect_arrow(img1, img2)
 
     #view_image(th, 'th')
     #view_image(new, 'new')
     #view_image(blank, 'blank')
     #view_image(diff, 'Differenzbid')
-    view_image(contour, 'Konturbild')
-    view_image(img_detected, 'Detektierung')
+    #view_image(contour, 'Konturbild')
+    #view_image(img_detected, 'Detektierung')
 
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    #cv.waitKey(0)
+    #cv.destroyAllWindows()
 
     #get_VIDEO('/Users/alex/Workspace/git_repos/IBV-Projekt/Testvideos/271220/20201227_155744.mp4')
 
