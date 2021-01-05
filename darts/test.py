@@ -254,7 +254,6 @@ def detect_arrow(img1, img2):
     # color correction - matplotlib and cv2 use different channels
     img1, img2 = cv.cvtColor(img1, cv.COLOR_BGR2RGB), cv.cvtColor(img2, cv.COLOR_BGR2RGB)
 
-
     new_img = corrected(img2, img1)
     #
     # if new_img is not False:
