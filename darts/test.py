@@ -241,7 +241,7 @@ def job():
 
     im1, im2 = detectshot()
 
-    diff, contour, img_detected = detect_arrow(img1, img2)
+    diff, contour, img_detected = detect_arrow(im1, im2)
 
     view_image(contour, 'Konturbild')
     view_image(img_detected, 'Detektierung')
