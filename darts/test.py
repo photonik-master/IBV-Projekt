@@ -167,7 +167,6 @@ def get_frame():
 
     ret, frame = cap.read()
 
-
     cap.release()
 
     return frame
@@ -224,18 +223,21 @@ def detectshot():
     if '1' in decoded_values:
 
         im1 = get_frame()
+        arduino_data = 0
+        arduino.close()
+        print('Connection closed')
+        return im1
 
     elif '2' in decoded_values:
         im2 = get_frame()
+        arduino_data = 0
+        arduino.close()
+        print('Connection closed')
+        return im2
 
     else:
         pass
 
-    arduino_data = 0
-
-    arduino.close()
-    print('Connection closed')
-    return im1, im2
 
 def job():
 
