@@ -238,18 +238,17 @@ def detectshot():
     else:
         pass
 
-
-def job():
-
-    im1, im2 = detectshot()
-
-    diff, contour, img_detected = detect_arrow(im1, im2)
-
-    view_image(contour, 'Konturbild')
-    view_image(img_detected, 'Detektierung')
-
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+#
+# def job():
+#
+#     im = detectshot()
+#
+#     diff, contour, img_detected = detect_arrow(im1, im2)
+#
+#     view_image(img_detected, 'Detektierung')
+#
+#     cv.waitKey(0)
+#     cv.destroyAllWindows()
 
 def detect_arrow(img1, img2):
 
@@ -285,12 +284,11 @@ def detect_arrow(img1, img2):
                                           cv.RETR_LIST,
                                           cv.CHAIN_APPROX_NONE)
 
-    img_detected = img2.copy()
-    img10 = img2.copy()
     for i in range(len(contours)):
-        if 700 < len(contours[i]) < 5000:
+        if 700 < len(contours[i]) < 2500:
             print('##############')
             print(len(contours[i]))
+            print('##############')
             erg = contours[i]
 
             img_contour = cv.drawContours(img2, contours[i], -1, (0, 255, 0), 5)
@@ -349,30 +347,33 @@ if __name__ == '__main__':
 
     ############################################# Test Arduino
 
-    print('Program started')
-
-    # Setting up the Arduino
-    schedule.every(0.5).seconds.do(job)
-
-    while True:
-        schedule.run_pending()
+    # print('Program started')
+    #
+    # # Setting up the Arduino
+    # schedule.every(0.5).seconds.do(job)
+    #
+    # while True:
+    #     schedule.run_pending()
 
     ############################################# Test correct() / absdiff()
 
-    #img1 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_11.png', 0)
-    #img2 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_12.png', 0)
+    img1 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_11.png', 0)
+    img2 = get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_12.png', 0)
+    view_image(img1, 'Konturbild')
+    view_image(img2, 'Konturbild')
 
-    #diff, contour, img_detected = detect_arrow(img1, img2)
 
-    #view_image(th, 'th')
-    #view_image(new, 'new')
-    #view_image(blank, 'blank')
-    #view_image(diff, 'Differenzbid')
-    #view_image(contour, 'Konturbild')
-    #view_image(img_detected, 'Detektierung')
+    diff, contour, img_detected = detect_arrow(img1, img2)
 
-    #cv.waitKey(0)
-    #cv.destroyAllWindows()
+    # view_image(th, 'th')
+    # view_image(new, 'new')
+    # view_image(blank, 'blank')
+    # view_image(diff, 'Differenzbid')
+    view_image(contour, 'Konturbild')
+    view_image(img_detected, 'Detektierung')
+
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
     #get_VIDEO('/Users/alex/Workspace/git_repos/IBV-Projekt/Testvideos/271220/20201227_155744.mp4')
 
