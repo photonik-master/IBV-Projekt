@@ -241,12 +241,6 @@ class Board:
 
         diff = cv.absdiff(img1, new_img)
 
-        # height, width, channels = diff.shape
-        # blank = np.zeros(shape=[height, width, 3], dtype=np.uint8)
-        # print(width)
-        # print(height)
-        # print(channels)
-
         grayscale = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
         blur = cv.medianBlur(grayscale, 5)
         ret, th = cv.threshold(blur, 12, 255, cv.THRESH_BINARY)
