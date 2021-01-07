@@ -2,6 +2,16 @@ import cv2 as cv
 import matplotlib as plt
 import numpy as np
 
+# def isInside(circle_x, circle_y, rad, x, y):
+#     # Compare radius of circle
+#     # with distance of its center
+#     # from given point
+#     if ((x - circle_x) * (x - circle_x) +
+#             (y - circle_y) * (y - circle_y) <= rad * rad):
+#         return True;
+#     else:
+#         return False;
+
 def zeichne():
 
     r = 100
@@ -27,8 +37,14 @@ def zeichne():
         y2 = int(p1[1] + length * np.sin(np.radians(angle)))
         cv.line(blank, center, (x2, y2), (255, 255, 255), 1, cv.LINE_8, 0)
 
-    # # Get the contours
-    # contours, hierarchy = cv.findContours(src, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    # Get the contours
+    # contours, hierarchy = cv.findContours(blank, cv.RETR_TREE, cv.CHAIN_APPROX_NONE)
+    #
+    # img_contour = blank.copy()
+    # for i in range(len(contours)):
+    #     print(i)
+    #     img_contour = cv.drawContours(img_contour, contours[i], -1, (0, 255, 0), 5)
+
     # # Calculate the distances to the contour
     # raw_dist = np.empty(src.shape, dtype=np.float32)
     # for i in range(src.shape[0]):
