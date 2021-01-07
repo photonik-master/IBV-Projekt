@@ -6,6 +6,16 @@ import time
 # import schedule
 # import test
 
+def view_image(im, name):
+    # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
+    # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
+    cv.namedWindow(name, cv.WINDOW_NORMAL)
+    # cv.moveWindow(name, 20, 20)
+    cv.resizeWindow(name, 400, 400)
+    cv.imshow(name, im)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+
 if __name__ == '__main__':
 
     print('Program started')
@@ -20,10 +30,12 @@ if __name__ == '__main__':
 
         if board.detect_shot():
             print('shot!')
+            view_image(board.get_img(), 'neues Bild')
 
             # board.detect_arrow()
         else:
             print('knopf!')
+            view_image(board.get_ref_img(), 'neues Referenzbild')
 
         time.sleep(1)
 

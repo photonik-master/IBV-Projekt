@@ -135,7 +135,7 @@ class Player:
 class Board:
 
     def __init__(self):
-        self.arduino = serial.Serial('com12', 9600)
+        self.arduino = serial.Serial('com7', 9600)
         print('Openconnection to Arduino')
         print('')
         self.ref_img = None
@@ -144,27 +144,27 @@ class Board:
     def __del__(self):
         self.arduino.close()
 
+
+
     def set_ref_img(self):
-        cam = cv.VideoCapture(0)
+        cam = cv.VideoCapture(1)
         ret_val, img = cam.read()
         # img = cv.flip(img, 1)
         self.ref_img = img
         cam.release()
 
     def get_ref_img(self):
-        self.view_image(self.ref_img, 'Referenzbild')
-        # return self.ref_img
+        return self.ref_img
 
     def set_img(self):
-        cam = cv.VideoCapture(0)
+        cam = cv.VideoCapture(1)
         ret_val, img = cam.read()
         # img = cv.flip(img, 1)
         self.img = img
         cam.release()
 
     def get_img(self):
-        self.view_image('Neues Bild')
-        # return self.ref_img
+        return self.img
 
     def get_corrected_img(self, img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst. (korrigiert)
 
@@ -204,8 +204,7 @@ class Board:
 
         if '1' in decoded_values:
 
-            # self.set_ref_img()
-            # self.get_ref_img()
+            self.set_ref_img()
             arduino_data = 0
             # self.arduino.close()
             print('neues Bild')
@@ -215,8 +214,7 @@ class Board:
 
         elif '2' in decoded_values:
 
-            # self.set_img()
-            # self.get_img()
+            self.set_img()
             arduino_data = 0
             # arduino.close()
             print('neues Referenzbild')
