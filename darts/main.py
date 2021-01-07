@@ -3,8 +3,8 @@ from game import Board
 import cv2 as cv
 import matplotlib as plt
 import time
-import schedule
-#import test
+# import schedule
+# import test
 
 if __name__ == '__main__':
 
