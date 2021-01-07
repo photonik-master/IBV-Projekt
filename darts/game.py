@@ -3,7 +3,6 @@ import cv2 as cv
 import numpy as np
 import serial
 
-
 class Game:
     winner = None
     type = 501
@@ -202,8 +201,8 @@ class Board:
 
         if '1' in decoded_values:
 
-            self.set_ref_img()
-            self.get_ref_img()
+            #self.set_ref_img()
+            #self.get_ref_img()
             arduino_data = 0
             arduino.close()
             print('neues Referenzbild')
@@ -213,8 +212,8 @@ class Board:
 
         elif '2' in decoded_values:
 
-            self.set_img()
-            self.get_img()
+            #self.set_img()
+            #self.get_img()
             arduino_data = 0
             arduino.close()
             print('neues Bild')

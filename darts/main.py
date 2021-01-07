@@ -4,16 +4,7 @@ import cv2 as cv
 import matplotlib as plt
 import time
 import schedule
-
-def view_image(img, name):
-    # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
-    # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
-    cv.namedWindow(name, cv.WINDOW_NORMAL)
-    #cv.moveWindow(name, 20, 20)
-    cv.resizeWindow(name, 400, 400)
-    cv.imshow(name, img)
-    #cv.waitKey(0)
-    #cv.destroyAllWindows()
+import test
 
 if __name__ == '__main__':
 
@@ -28,11 +19,22 @@ if __name__ == '__main__':
     while True:
 
         if board.detect_shot():
-            board.detect_arrow()
+            pass
+
+            # board.detect_arrow()
         else:
             pass
 
         time.sleep(1)
+
+
+
+
+
+
+
+
+
 
     # für später, um Spiel zu starten
     # game = Game()
@@ -41,6 +43,10 @@ if __name__ == '__main__':
     #         player.turn(game)
     #         if game.hasWinner() is True:
     #             break
+
+
+
+
 
 
     # nur für den Tests!!! (Bilder einlesen)

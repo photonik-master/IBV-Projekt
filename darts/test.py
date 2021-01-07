@@ -4,6 +4,16 @@ import numpy as np
 import schedule
 import serial
 
+def view_image(img, name):
+    # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
+    # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
+    cv.namedWindow(name, cv.WINDOW_NORMAL)
+    #cv.moveWindow(name, 20, 20)
+    cv.resizeWindow(name, 400, 400)
+    cv.imshow(name, img)
+    #cv.waitKey(0)
+    #cv.destroyAllWindows()
+
 def detectDartboard(IM):
 
     #IM gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
