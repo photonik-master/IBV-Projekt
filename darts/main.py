@@ -4,7 +4,7 @@ import cv2 as cv
 import matplotlib as plt
 import time
 import schedule
-import test
+#import test
 
 if __name__ == '__main__':
 
@@ -19,11 +19,11 @@ if __name__ == '__main__':
     while True:
 
         if board.detect_shot():
-            pass
+            print('shot!')
 
             # board.detect_arrow()
         else:
-            pass
+            print('knopf!')
 
         time.sleep(1)
 

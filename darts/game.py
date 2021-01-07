@@ -3,6 +3,7 @@ import cv2 as cv
 import numpy as np
 import serial
 
+
 class Game:
     winner = None
     type = 501
@@ -135,6 +136,9 @@ class Player:
 class Board:
 
     def __init__(self):
+        self.arduino = serial.Serial('com12', 9600)
+        print('Openconnection to Arduino')
+        print('')
         self.ref_img = None
         self.img = None
 
@@ -192,32 +196,29 @@ class Board:
 
     def detect_shot(self):
 
-        arduino = serial.Serial('com12', 9600)
-        print('Openconnection to Arduino')
-        print('')
-        arduino_data = arduino.readline()
+        arduino_data = self.arduino.readline()
         print(arduino_data)
         decoded_values = str(arduino_data[0:len(arduino_data)].decode("utf-8"))
 
         if '1' in decoded_values:
 
-            #self.set_ref_img()
-            #self.get_ref_img()
+            # self.set_ref_img()
+            # self.get_ref_img()
             arduino_data = 0
-            arduino.close()
-            print('neues Referenzbild')
-            print('Connection closed')
+            # self.arduino.close()
+            print('neues Bild')
+            # print('Connection closed')
             print('')
-            return False
+            return True
 
         elif '2' in decoded_values:
 
-            #self.set_img()
-            #self.get_img()
+            # self.set_img()
+            # self.get_img()
             arduino_data = 0
-            arduino.close()
-            print('neues Bild')
-            print('Connection closed')
+            # arduino.close()
+            print('neues Referenzbild')
+            # print('Connection closed')
             print('')
             return True
 
