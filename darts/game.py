@@ -3,7 +3,6 @@ import cv2 as cv
 import numpy as np
 import serial
 
-
 class Game:
     winner = None
     type = 501
@@ -141,6 +140,9 @@ class Board:
         print('')
         self.ref_img = None
         self.img = None
+
+    def __del__(self):
+        self.arduino.close()
 
     def set_ref_img(self):
         cam = cv.VideoCapture(0)
