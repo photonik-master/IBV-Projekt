@@ -3,6 +3,7 @@ import cv2 as cv
 import numpy as np
 import serial
 
+
 class Game:
     winner = None
     type = 501
@@ -135,16 +136,23 @@ class Player:
 class Board:
 
     def __init__(self):
-        self.arduino = serial.Serial('com7', 9600)
-        print('Openconnection to Arduino')
-        print('')
+        # Arduino
+
+        #self.arduino = serial.Serial('com7', 9600)
+        #print('Openconnection to Arduino')
+        #print('')
         self.ref_img = None
         self.img = None
 
+        # digBoard
+        self.rad = [10, 15, 100, 110, 200, 210]
+        self.cen = None
+        self.line_length = 210
+        self.cir_center = (200, 200)
+        self.angle_offset = 9
+
     def __del__(self):
         self.arduino.close()
-
-
 
     def set_ref_img(self):
         cam = cv.VideoCapture(1)
@@ -157,14 +165,47 @@ class Board:
         return self.ref_img
 
     def set_img(self):
-        cam = cv.VideoCapture(1)
+        cam = cv.VideoCapture(0)
         ret_val, img = cam.read()
         # img = cv.flip(img, 1)
         self.img = img
         cam.release()
 
     def get_img(self):
+        self.view_image(self.img, 'neues Bild')
         return self.img
+
+    @staticmethod
+    def view_image(im, name):
+        # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
+        # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
+        cv.namedWindow(name, cv.WINDOW_NORMAL)
+        # cv.moveWindow(name, 20, 20)
+        cv.resizeWindow(name, 400, 400)
+        cv.imshow(name, im)
+        cv.waitKey(3000)
+        cv.destroyAllWindows()
+
+    def draw_board(self):
+
+        shape = self.img.shape
+        # height, width = 400, 400
+        blank = np.zeros((shape[0], shape[1]), dtype=np.uint8)
+        # blank = np.zeros(shape=[height, width, 3], dtype=np.uint8)
+
+        for i in self.rad:
+            cv.circle(blank, self.cir_center, i, (255, 255, 255), 1, cv.LINE_8, 0)
+
+        a = np.arange(0 + self.angle_offset, 360 + self.angle_offset, 18)
+
+        for angle in a:
+            x2 = int(self.cir_center[0] + self.line_length * np.cos(np.radians(angle)))
+            y2 = int(self.cir_center[1] + self.line_length * np.sin(np.radians(angle)))
+            cv.line(blank, self.cir_center, (x2, y2), (255, 255, 255), 1, cv.LINE_8, 0)
+
+        cv.imshow('Board', blank)
+        cv.waitKey(3000)
+        cv.destroyAllWindows()
 
     def get_corrected_img(self, img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst. (korrigiert)
 
