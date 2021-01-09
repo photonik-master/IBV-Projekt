@@ -136,11 +136,16 @@ class Player:
 class Board:
 
     def __init__(self):
-        # Arduino
 
-        #self.arduino = serial.Serial('com7', 9600)
-        #print('Openconnection to Arduino')
-        #print('')
+        # Arduino
+        try:
+            print('Openconnection to Arduino')
+            print('')
+            self.arduino = serial.Serial('com7', 9600)
+
+        except Exception as err:
+            print(err)
+
         self.ref_img = None
         self.img = None
 
@@ -152,24 +157,40 @@ class Board:
         self.angle_offset = 9
 
     def __del__(self):
+        print('Closeconnection to Arduino')
+        print('')
         self.arduino.close()
 
     def set_ref_img(self):
-        cam = cv.VideoCapture(1)
-        ret_val, img = cam.read()
-        # img = cv.flip(img, 1)
-        self.ref_img = img
-        cam.release()
+
+        try:
+            print('Openconnection to Cam')
+            print('')
+            cam = cv.VideoCapture(1)
+            ret_val, img = cam.read()
+            # img = cv.flip(img, 1)
+            self.ref_img = img
+            cam.release()
+
+        except Exception as err:
+            print(err)
 
     def get_ref_img(self):
         return self.ref_img
 
     def set_img(self):
-        cam = cv.VideoCapture(0)
-        ret_val, img = cam.read()
-        # img = cv.flip(img, 1)
-        self.img = img
-        cam.release()
+
+        try:
+            print('Openconnection to Cam')
+            print('')
+            cam = cv.VideoCapture(0)
+            ret_val, img = cam.read()
+            # img = cv.flip(img, 1)
+            self.img = img
+            cam.release()
+
+        except Exception as err:
+            print(err)
 
     def get_img(self):
         self.view_image(self.img, 'neues Bild')
@@ -185,6 +206,10 @@ class Board:
         cv.imshow(name, im)
         cv.waitKey(3000)
         cv.destroyAllWindows()
+
+    # TODO: hier Punktenzaehlung
+    def scorer(self):
+        pass
 
     def draw_board(self):
 
