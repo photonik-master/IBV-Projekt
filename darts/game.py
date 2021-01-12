@@ -232,17 +232,26 @@ class Board:
         cv.waitKey(0)
         cv.destroyAllWindows()
 
-    # TODO: hier Punktenzaehlung
+    # TODO: hier Punktenzaehlung-Gesamtablauf
     def scorer(self):
+        pass
+
+    # TODO: hier Ellipse-Auswertung
+    def scorer_ellipse(self):
 
         for i in self.ellipse:
             print(i)
             if self.is_inside_ellipse(self.point, self.ell_center[i], self.ell_rad[i]) == True:
                 pass
             else:
+
                 print('Treffer!')
                 print(self.ellipse_score[i])
                 break
+
+    # TODO: hier Sektoren-Auswertung
+    def scorer_sector(self):
+        pass
 
     def draw_board(self):
 

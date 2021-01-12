@@ -45,7 +45,7 @@ if __name__ == '__main__':
     cv.waitKey(1)
     cv.destroyAllWindows()
 
-    board.scorer()
+    board.scorer_ellipse()
 
 
 
