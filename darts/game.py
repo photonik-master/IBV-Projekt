@@ -138,23 +138,47 @@ class Board:
     def __init__(self):
 
         # Arduino
-        try:
-            print('Openconnection to Arduino')
-            print('')
-            self.arduino = serial.Serial('com7', 9600)
-
-        except Exception as err:
-            print(err)
+        # try:
+        #     print('Openconnection to Arduino')
+        #     print('')
+        #     self.arduino = serial.Serial('com7', 9600)
+        #
+        # except Exception as err:
+        #     print(err)
 
         self.ref_img = None
         self.img = None
 
-        # digBoard
+        # digBoard_circle
         self.rad = [10, 15, 100, 110, 200, 210]
         self.cen = None
         self.line_length = 210
         self.cir_center = (200, 200)
         self.angle_offset = 9
+
+        self.point = (840, 1160)
+
+        # digBoard_ellipse
+        self.ellipse = np.arange(0, 6)
+        self.ellipse_score = [50, 25, 1, 3, 1, 2]
+        self.ell_center = [(840, 1160),
+                           (840, 1160),
+                           (810, 1155),
+                           (810, 1155),
+                           (770, 1155),
+                           (762, 1152)]
+
+        self.ell_rad = [(25, 30),
+                        (55, 70),
+                        (320, 430),
+                        (360, 470),
+                        (535, 710),
+                        (570, 758)]
+
+        self.zone_center = (840, 1160)
+        self.zone_length = 800
+        # self.zone_angle_offset = None
+        self.zone_angle = [10, 33, 52, 69, 83, 96, 111, 126, 145, 167, 191, 213, 232, 248, 262, 276, 290, 306, 325, 346]
 
     def __del__(self):
         print('Closeconnection to Arduino')
@@ -176,6 +200,7 @@ class Board:
             print(err)
 
     def get_ref_img(self):
+        self.view_image(self.ref_img, 'neues Bild')
         return self.ref_img
 
     def set_img(self):
@@ -204,33 +229,36 @@ class Board:
         # cv.moveWindow(name, 20, 20)
         cv.resizeWindow(name, 400, 400)
         cv.imshow(name, im)
-        cv.waitKey(3000)
+        cv.waitKey(0)
         cv.destroyAllWindows()
 
     # TODO: hier Punktenzaehlung
     def scorer(self):
-        pass
+
+        for i in self.ellipse:
+            print(i)
+            if self.is_inside_ellipse(self.point, self.ell_center[i], self.ell_rad[i]) == True:
+                pass
+            else:
+                print('Treffer!')
+                print(self.ellipse_score[i])
+                break
 
     def draw_board(self):
 
-        shape = self.img.shape
-        # height, width = 400, 400
-        blank = np.zeros((shape[0], shape[1]), dtype=np.uint8)
-        # blank = np.zeros(shape=[height, width, 3], dtype=np.uint8)
+        image = self.ref_img.copy()
+        for i in self.ellipse:
+            cv.ellipse(image, self.ell_center[i], self.ell_rad[i], 0, 0, 360, (255, 255, 255), 1, cv.LINE_8, 0)
 
-        for i in self.rad:
-            cv.circle(blank, self.cir_center, i, (255, 255, 255), 1, cv.LINE_8, 0)
+        # a = np.arange(0 + offset, 360 + offset, 18)
+        for angle in self.zone_angle:
+            x2 = int(self.zone_center[0] + self.zone_length * np.cos(np.radians(angle)))
+            y2 = int(self.zone_center[1] + self.zone_length * np.sin(np.radians(angle)))
+            cv.line(image, self.zone_center, (x2, y2), (255, 255, 255), 1, cv.LINE_8, 0)
 
-        a = np.arange(0 + self.angle_offset, 360 + self.angle_offset, 18)
+        cv.drawMarker(image, self.point, color=(255, 255, 255), markerType=cv.MARKER_CROSS, thickness=3)
 
-        for angle in a:
-            x2 = int(self.cir_center[0] + self.line_length * np.cos(np.radians(angle)))
-            y2 = int(self.cir_center[1] + self.line_length * np.sin(np.radians(angle)))
-            cv.line(blank, self.cir_center, (x2, y2), (255, 255, 255), 1, cv.LINE_8, 0)
-
-        cv.imshow('Board', blank)
-        cv.waitKey(3000)
-        cv.destroyAllWindows()
+        return image
 
     def get_corrected_img(self, img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst. (korrigiert)
 
@@ -338,6 +366,7 @@ class Board:
                         # print(cord)
                         # print(erg[cord[0], cord[1], 0])
                         # print(erg[cord[0], cord[1], 1])
+                        self.point.append((erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]))
 
                         img_detected = cv.drawMarker(img_detected, (erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]),
                                                      color=(0, 0, 255), markerType=cv.MARKER_CROSS, thickness=10)
@@ -346,6 +375,15 @@ class Board:
 
         return diff, img_contour, img_detected
 
-    def get_image_file(self, name, param):
-        img = cv.imread(name, param)
-        return img
+    def is_inside_ellipse(self, point, center, rad):
+        print(point)
+        print(center)
+        print(rad)
+
+        a = ((point[0] - center[0]) ** 2) / (rad[0] ** 2)
+        b = ((point[1] - center[1]) ** 2) / (rad[1] ** 2)
+
+        if (a + b) < 1:
+            return False
+        else:
+            return True

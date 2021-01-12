@@ -181,15 +181,16 @@ def get_frame():
 
     return frame
 
+
 def view_image(im, name):
-
-    #flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
-    #gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
-
+    # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
+    # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
     cv.namedWindow(name, cv.WINDOW_NORMAL)
-    cv.moveWindow(name, 20, 20)
-    cv.resizeWindow(name, 600, 600)
+    # cv.moveWindow(name, 20, 20)
+    cv.resizeWindow(name, 400, 400)
     cv.imshow(name, im)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
 def corrected(img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst. (korrigiert)
 
