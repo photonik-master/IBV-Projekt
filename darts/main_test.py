@@ -38,6 +38,8 @@ if __name__ == '__main__':
     # cv.waitKey(1)
     # cv.destroyAllWindows()
 
+
+    # hier Auftreffpunkt setzen (später wird vom arrow_detect()-Funktion gesetzt)
     board.point = (1150, 1160)
 
     db = board.draw_board()
@@ -46,43 +48,3 @@ if __name__ == '__main__':
     cv.destroyAllWindows()
 
     board.scorer_ellipse()
-
-
-
-
-
-
-    # board.draw_board()
-    #
-    # cv.waitKey(1)
-    # cv.destroyAllWindows()
-
-    # while True:
-    #
-    #     if board.detect_shot():
-    #         print('shot!')
-    #         print(board.get_img())
-    #
-    #         # board.detect_arrow()
-    #     else:
-    #         print('knopf!')
-    #         print(board.get_ref_img())
-    #
-    #     time.sleep(1)
-
-
-
-
-
-
-
-
-
-
-    # für später, um Spiel zu starten
-    # game = Game()
-    # while game.hasWinner() is False:
-    #     for player in game.players:
-    #         player.turn(game)
-    #         if game.hasWinner() is True:
-    #             break

@@ -385,9 +385,6 @@ class Board:
         return diff, img_contour, img_detected
 
     def is_inside_ellipse(self, point, center, rad):
-        print(point)
-        print(center)
-        print(rad)
 
         a = ((point[0] - center[0]) ** 2) / (rad[0] ** 2)
         b = ((point[1] - center[1]) ** 2) / (rad[1] ** 2)
