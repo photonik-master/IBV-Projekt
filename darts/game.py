@@ -157,6 +157,7 @@ class Board:
         self.angle_offset = 9
 
         self.point = (840, 1160)
+        self.point_new = []
 
         # digBoard_ellipse
         self.ellipse = np.arange(0, 6)
@@ -375,12 +376,23 @@ class Board:
                         # print(cord)
                         # print(erg[cord[0], cord[1], 0])
                         # print(erg[cord[0], cord[1], 1])
-                        self.point.append((erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]))
+                        self.point_new.append((erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]))
 
                         img_detected = cv.drawMarker(img_detected, (erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]),
                                                      color=(0, 0, 255), markerType=cv.MARKER_CROSS, thickness=10)
             else:
                 pass
+
+        self.point = self.point_new[0]
+        # TODO: Mittelwert von Punkten
+        # xx = 0
+        # yy = 0
+        # for i in self.point_new:
+        #     print(i)
+        #     xx += i[0]
+        #     yy += i[1]
+        #
+        # self.point = (xx/len(self.point_new), yy/len(self.point_new))
 
         return diff, img_contour, img_detected
 
