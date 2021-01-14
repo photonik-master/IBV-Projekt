@@ -150,6 +150,7 @@ class Board:
         self.img = None
 
         # digBoard_circle
+
         self.rad = [10, 15, 100, 110, 200, 210]
         self.cen = None
         self.line_length = 210
@@ -160,6 +161,7 @@ class Board:
         self.point_new = []
 
         # digBoard_ellipse
+
         self.ellipse = np.arange(0, 6)
         self.ellipse_score = [50, 25, 1, 3, 1, 2]
         self.ell_center = [(840, 1160),
@@ -233,34 +235,75 @@ class Board:
         cv.waitKey(0)
         cv.destroyAllWindows()
 
-    # TODO: hier Punktenzaehlung-Gesamtablauf
     def scorer(self):
-        pass
 
-    # TODO: hier Ellipse-Auswertung
-    def scorer_ellipse(self):
-
+        theta = None
         for i in self.ellipse:
-            print(i)
             if self.is_inside_ellipse(self.point, self.ell_center[i], self.ell_rad[i]) == True:
                 pass
             else:
+                # print('Ellipse: {0}'.format(i))
+                if self.ellipse_score[i] == 50 or self.ellipse_score[i] == 25:
+                    print(self.ellipse_score[i])
+                    return self.ellipse_score[i]
+                else:
+                    # print('Multiplikation mit: {0}'.format(self.ellipse_score[i]))
+                    factor = self.ellipse_score[i]
+                    dx = self.point[0] - self.zone_center[0]
+                    dy = self.point[1] - self.zone_center[1]
+                    # print(dx)
+                    # print(dy)
+                    if dy > 0 and dx > 0:
+                        theta = np.degrees(np.arctan(dy / dx))
+                        break
+                    elif dy > 0 and dx < 0:
+                        theta = 180 - np.degrees(np.arctan(dy / abs(dx)))
+                        break
+                    elif dy < 0 and dx < 0:
+                        theta = 180 + np.degrees(np.arctan(abs(dy) / abs(dx)))
+                        break
+                    elif dy < 0 and dx > 0:
+                        theta = 360 - np.degrees(np.arctan(abs(dy) / dx))
+                        break
+                    elif dx == 0 and dy < 0:
+                        theta = 270
+                        break
+                    elif dx == 0 and dy > 0:
+                        theta = 90
+                        break
+                    elif dy == 0 and dx < 0:
+                        theta = 180
+                        break
+                    elif dy == 0 and dx > 0:
+                        theta = 0
+                        break
+                    else:
+                        print('scorer fehler!!!')
 
-                print('Treffer!')
-                print(self.ellipse_score[i])
-                break
-
-    # TODO: hier Sektoren-Auswertung
-    def scorer_sector(self):
-        pass
+        # print(theta)
+        # [10, 33, 52, 69, 83, 96, 111, 126, 145, 167, 191, 213, 232, 248, 262, 276, 290, 306, 325, 346]
+        po = [6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5, 20, 1, 18, 4, 13]
+        for i, l in enumerate(self.zone_angle):
+            # print(i)
+            # print(l)
+            # print(punkte[i])
+            if theta < l:
+                # print(po[i] * factor)
+                return po[i] * factor
+            elif theta == l:
+                # TODO: In diesem Fall müssen die Punkte manuell eingetragen werden
+                pass
+            elif self.zone_angle[19] < theta < 360:
+                # print(po[0])
+                return po[0]
+            else:
+                pass
 
     def draw_board(self):
-
         image = self.ref_img.copy()
         for i in self.ellipse:
             cv.ellipse(image, self.ell_center[i], self.ell_rad[i], 0, 0, 360, (255, 255, 255), 1, cv.LINE_8, 0)
 
-        # a = np.arange(0 + offset, 360 + offset, 18)
         for angle in self.zone_angle:
             x2 = int(self.zone_center[0] + self.zone_length * np.cos(np.radians(angle)))
             y2 = int(self.zone_center[1] + self.zone_length * np.sin(np.radians(angle)))
@@ -301,7 +344,6 @@ class Board:
         return False
 
     def detect_shot(self):
-
         arduino_data = self.arduino.readline()
         print(arduino_data)
         decoded_values = str(arduino_data[0:len(arduino_data)].decode("utf-8"))
@@ -332,7 +374,6 @@ class Board:
             return False
 
     def detect_arrow(self):
-
         img1, img2 = cv.cvtColor(self.ref_img, cv.COLOR_BGR2RGB), cv.cvtColor(self.img, cv.COLOR_BGR2RGB)
 
         new_img = self.get_corrected_img(img2, img1)
@@ -397,7 +438,6 @@ class Board:
         return diff, img_contour, img_detected
 
     def is_inside_ellipse(self, point, center, rad):
-
         a = ((point[0] - center[0]) ** 2) / (rad[0] ** 2)
         b = ((point[1] - center[1]) ** 2) / (rad[1] ** 2)
 
