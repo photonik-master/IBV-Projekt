@@ -281,7 +281,7 @@ class Board:
                         print('scorer fehler!!!')
 
         if theta == None:
-            return 'Auserhlb vom Zaehbereich'
+            return 'Nicht im Zaehlbereich'
         else:
             # [10, 33, 52, 69, 83, 96, 111, 126, 145, 167, 191, 213, 232, 248, 262, 276, 290, 306, 325, 346]
             po = [6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5, 20, 1, 18, 4, 13]
