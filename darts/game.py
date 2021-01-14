@@ -280,24 +280,26 @@ class Board:
                     else:
                         print('scorer fehler!!!')
 
-        # print(theta)
-        # [10, 33, 52, 69, 83, 96, 111, 126, 145, 167, 191, 213, 232, 248, 262, 276, 290, 306, 325, 346]
-        po = [6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5, 20, 1, 18, 4, 13]
-        for i, l in enumerate(self.zone_angle):
-            # print(i)
-            # print(l)
-            # print(punkte[i])
-            if theta < l:
-                # print(po[i] * factor)
-                return po[i] * factor
-            elif theta == l:
-                # TODO: In diesem Fall müssen die Punkte manuell eingetragen werden
-                pass
-            elif self.zone_angle[19] < theta < 360:
-                # print(po[0])
-                return po[0]
-            else:
-                pass
+        if theta == None:
+            return 'Auserhlb vom Zaehbereich'
+        else:
+            # [10, 33, 52, 69, 83, 96, 111, 126, 145, 167, 191, 213, 232, 248, 262, 276, 290, 306, 325, 346]
+            po = [6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5, 20, 1, 18, 4, 13]
+            for i, l in enumerate(self.zone_angle):
+                # print(i)
+                # print(l)
+                # print(punkte[i])
+                if theta < l:
+                    # print(po[i] * factor)
+                    return po[i] * factor
+                elif theta == l:
+                    # TODO: In diesem Fall müssen die Punkte manuell eingetragen werden
+                    pass
+                elif self.zone_angle[19] < theta < 360:
+                    # print(po[0])
+                    return po[0]
+                else:
+                    pass
 
     def draw_board(self):
         image = self.ref_img.copy()
