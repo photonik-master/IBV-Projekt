@@ -146,6 +146,7 @@ class Board:
         # except Exception as err:
         #     print(err)
 
+        self.ausgaben_text = ''
         self.ref_img = None
         self.img = None
 
@@ -203,7 +204,7 @@ class Board:
             print(err)
 
     def get_ref_img(self):
-        self.view_image(self.ref_img, 'neues Bild')
+        self.view_image(self.ref_img, 'Referenzbild')
         return self.ref_img
 
     def set_img(self):
@@ -220,8 +221,10 @@ class Board:
         except Exception as err:
             print(err)
 
+        self.ausgaben_text = ''
+
     def get_img(self):
-        self.view_image(self.img, 'neues Bild')
+        self.view_image(self.img, 'Bild')
         return self.img
 
     @staticmethod
@@ -313,6 +316,13 @@ class Board:
 
         cv.drawMarker(image, self.point, color=(255, 255, 255), markerType=cv.MARKER_CROSS, thickness=3)
 
+        font = cv.FONT_HERSHEY_SIMPLEX
+        org = (60, 160)
+        fontScale = 5
+        color = (255, 0, 0)
+        thickness = 10
+        cv.putText(image, self.ausgaben_text, org, font, fontScale, color, thickness, cv.LINE_AA)
+
         return image
 
     def get_corrected_img(self, img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst. (korrigiert)
@@ -380,11 +390,10 @@ class Board:
 
         new_img = self.get_corrected_img(img2, img1)
 
-        if new_img is not False:
-            print('Bild korregiert')
-            # view_image(new_img, 'corr')
-        else:
-            print('Bild nicht korregiert')
+        # if new_img is not False:
+        #     # print('Bild korregiert')
+        # else:
+        #     # print('Bild nicht korregiert')
 
         diff = cv.absdiff(img1, new_img)
 
@@ -404,7 +413,7 @@ class Board:
         img_contour = img2.copy()
         for i in range(len(contours)):
             if 700 < len(contours[i]) < 2500:
-                print('Kontur {0}: {1}'.format(i, len(contours[i])))
+                # print('Kontur {0}: {1}'.format(i, len(contours[i])))
                 erg = contours[i]
 
                 img_contour = cv.drawContours(img_contour, contours[i], -1, (0, 255, 0), 5)
@@ -426,16 +435,16 @@ class Board:
             else:
                 pass
 
-        self.point = self.point_new[0]
-        # TODO: Mittelwert von Punkten
-        # xx = 0
-        # yy = 0
-        # for i in self.point_new:
-        #     print(i)
-        #     xx += i[0]
-        #     yy += i[1]
-        #
-        # self.point = (xx/len(self.point_new), yy/len(self.point_new))
+        xx = 0
+        yy = 0
+        k = 0
+        for i in self.point_new:
+            xx += i[0]
+            yy += i[1]
+            k += 1
+
+        self.point = (round(xx / k), round(yy / k))
+        print('Auftreffpunkt: {0}'.format(self.point))
 
         return diff, img_contour, img_detected
 
