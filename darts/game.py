@@ -356,17 +356,16 @@ class Board:
         return False
 
     def detect_shot(self):
+
         arduino_data = self.arduino.readline()
         print(arduino_data)
         decoded_values = str(arduino_data[0:len(arduino_data)].decode("utf-8"))
 
         if '1' in decoded_values:
 
-            self.set_ref_img()
+            self.set_img()
             arduino_data = 0
-            # self.arduino.close()
             print('neues Bild')
-            # print('Connection closed')
             print('')
             return True
 
@@ -374,9 +373,7 @@ class Board:
 
             self.set_img()
             arduino_data = 0
-            # arduino.close()
-            print('neues Referenzbild')
-            # print('Connection closed')
+            print('neues Bild')
             print('')
             return True
 
