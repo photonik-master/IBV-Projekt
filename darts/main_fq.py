@@ -3,6 +3,7 @@ from game import Board
 import cv2 as cv
 import time
 import sys
+import sys
 
 if __name__ == '__main__':
 
@@ -16,9 +17,19 @@ if __name__ == '__main__':
     cv.waitKey(0)
     cv.destroyAllWindows()
 
+    answer = input('Fortsetzen? (j/n)')
+    if answer == 'J' or 'j':
+        pass
+    else:
+        sys.exit(0)
+
+    i = 0
+    j = 0
+    n = 0
     while True:
 
         if board.detect_shot():
+            i += 1
 
             board.get_img()
             cv.waitKey(1000)
@@ -46,24 +57,16 @@ if __name__ == '__main__':
             cv.waitKey(1000)
             cv.destroyAllWindows()
 
+            answer = input('Richtig?')
+            if answer == '':
+                j += 1
+            else:
+                n += 1
+
+            print("Fehlerquote: {0}".format((n * 100) / i))
+            print('')
+
         else:
             pass
 
         time.sleep(1)
-
-
-
-
-
-
-
-
-
-
-    # für später, um Spiel zu starten
-    # game = Game()
-    # while game.hasWinner() is False:
-    #     for player in game.players:
-    #         player.turn(game)
-    #         if game.hasWinner() is True:
-    #             break
