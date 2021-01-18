@@ -8,6 +8,7 @@ class Game:
     winner = None
     type = 501
     players = []
+    board = None
 
     def __init__(self):
         self.setUp()
@@ -22,6 +23,7 @@ class Game:
         print("Wie viele Spieler?")
         answer = int(input())
         self.setPlayers(answer)
+        self.setBoard()
         return self
 
     def setPlayers(self, playerCount):
@@ -32,6 +34,10 @@ class Game:
             players.append(Player(name, self.type))
             print("Hello " + name)
         self.players = players
+
+    # TODO: Board initialisierung
+    def setBoard(self):
+        self.board = Board()
 
     def setType(self, type):
         self.type = type
@@ -87,6 +93,7 @@ class Player:
                 return
 
         print("{0} hat {1} Punkte erziehlt".format(self.name, self.turnTotal))
+        print('')
         self.updateScore()
 
     def throwDart(self, dart):
