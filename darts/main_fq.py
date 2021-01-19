@@ -3,7 +3,6 @@ from game import Board
 import cv2 as cv
 import time
 import sys
-import sys
 
 if __name__ == '__main__':
 
@@ -13,7 +12,7 @@ if __name__ == '__main__':
     board.set_ref_img()
 
     db = board.draw_board()
-    board.view_image(db, 'Digital Board')
+    board.view_image(db, 'digBoard')
     cv.waitKey(0)
     cv.destroyAllWindows()
 
