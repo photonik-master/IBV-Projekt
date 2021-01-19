@@ -444,6 +444,7 @@ class Board:
             yy += i[1]
             k += 1
 
+        # TODO: k==0 kein Kontur
         self.point = (round(xx / k), round(yy / k))
         print('Auftreffpunkt: {0}'.format(self.point))
 
