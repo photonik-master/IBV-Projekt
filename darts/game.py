@@ -35,7 +35,7 @@ class Game:
             print("Hello " + name)
         self.players = players
 
-    # TODO: Board initialisierung
+    # TODO: Board Initialisierung
     def setBoard(self):
         self.board = Board()
 
@@ -203,6 +203,7 @@ class Board:
             print('')
             cam = cv.VideoCapture(1)
             ret_val, img = cam.read()
+            img = cv.rotate(img, cv.ROTATE_270_CLOCKWISE)
             # img = cv.flip(img, 1)
             self.ref_img = img
             cam.release()
