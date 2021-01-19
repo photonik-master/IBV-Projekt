@@ -236,7 +236,7 @@ class Board:
         # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
         # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
         cv.namedWindow(name, cv.WINDOW_NORMAL)
-        #cv.moveWindow(name, 20, 20)
+        # cv.moveWindow(name, 20, 20)
         cv.resizeWindow(name, 400, 400)
         cv.imshow(name, im)
         cv.waitKey(0)
@@ -406,7 +406,7 @@ class Board:
         erosion = cv.erode(th, kernel, iterations=1)
         new = cv.dilate(erosion, kernel, iterations=1)
 
-        kernel = np.ones((5, 5), np.uint8)
+        kernel = np.ones((10, 10), np.uint8)
         closing = cv.morphologyEx(new, cv.MORPH_CLOSE, kernel)
 
         contours, hierarchy = cv.findContours(closing.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
@@ -414,10 +414,10 @@ class Board:
         img_contour = img2.copy()
         for i in range(len(contours)):
             if 700 < len(contours[i]) < 2500:
-                # print('Kontur {0}: {1}'.format(i, len(contours[i])))
+                print('Kontur {0}: {1}'.format(i, len(contours[i])))
                 erg = contours[i]
 
-                img_contour = cv.drawContours(img_contour, contours[i], -1, (0, 255, 0), 5)
+                img_contour = cv.drawContours(img_contour, contours[i], -1, (0, 255, 0), 3)
 
                 a = erg.min(axis=0)
                 b = np.where(erg == a[0][0])
