@@ -203,13 +203,15 @@ class Board:
             print('')
             cam = cv.VideoCapture(1)
             ret_val, img = cam.read()
-            img = cv.rotate(img, cv.ROTATE_270_CLOCKWISE)
+            # img = cv.rotate(img, cv.ROTATE_270_CLOCKWISE)
             # img = cv.flip(img, 1)
             self.ref_img = img
             cam.release()
 
         except Exception as err:
             print(err)
+
+        return self.ref_img
 
     def get_ref_img(self):
         self.view_image(self.ref_img, 'Referenzbild')
@@ -220,7 +222,7 @@ class Board:
         try:
             print('Openconnection to Cam')
             print('')
-            cam = cv.VideoCapture(0)
+            cam = cv.VideoCapture(1)
             ret_val, img = cam.read()
             # img = cv.flip(img, 1)
             self.img = img
@@ -230,6 +232,7 @@ class Board:
             print(err)
 
         self.ausgaben_text = ''
+        return self.img
 
     def get_img(self):
         self.view_image(self.img, 'Bild')
@@ -320,7 +323,7 @@ class Board:
         for angle in self.zone_angle:
             x2 = int(self.zone_center[0] + self.zone_length * np.cos(np.radians(angle)))
             y2 = int(self.zone_center[1] + self.zone_length * np.sin(np.radians(angle)))
-            cv.line(image, self.zone_center, (x2, y2), (255, 255, 255), 1, cv.LINE_8, 0)
+            cv.line(image, self.zone_center, (x2, y2), (0, 255, 0), 1, cv.LINE_8, 0)
 
         cv.drawMarker(image, self.point, color=(255, 255, 255), markerType=cv.MARKER_CROSS, thickness=3)
 
