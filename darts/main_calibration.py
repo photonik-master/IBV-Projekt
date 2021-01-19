@@ -9,26 +9,33 @@ if __name__ == '__main__':
 
     board = Board()
 
-    board.view_image(board.set_ref_img(), 'Ref_Img')
-    cv.waitKey(0)
+    board.set_ref_img()
+    # board.get_ref_img()
+
+    board.set_img()
+    # board.get_img()
+
+    board.ausgaben_text = 'Kalibration'
+
+    cv.waitKey(1)
     cv.destroyAllWindows()
 
-    board.ell_center = [(840, 1160),
-                        (840, 1160),
-                        (810, 1155),
-                        (810, 1155),
-                        (770, 1155),
-                        (762, 1152)]
+    board.ell_center = [(640, 480),
+                        (640, 480),
+                        (640, 480),
+                        (640, 480),
+                        (640, 480),
+                        (640, 480)]
 
-    board.ell_rad = [(5, 5),
-                     (5, 5),
-                     (5, 5),
-                     (5, 5),
-                     (5, 5),
-                     (5, 5)]
+    board.ell_rad = [(20, 20),
+                     (40, 40),
+                     (100, 100),
+                     (120, 120),
+                     (380, 380),
+                     (400, 400)]
 
-    board.zone_center = (840, 1160)
-    board.zone_length = 800
+    board.zone_center = (640, 480)
+    board.zone_length = 400
     # self.zone_angle_offset = None
     board.zone_angle = [10,
                         33,
@@ -53,5 +60,6 @@ if __name__ == '__main__':
 
     db = board.draw_board()
     board.view_image(db, 'digBoard')
-    cv.waitKey(0)
+
+    cv.waitKey(1)
     cv.destroyAllWindows()

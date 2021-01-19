@@ -145,13 +145,13 @@ class Board:
     def __init__(self):
 
         # Arduino
-        try:
-            print('Openconnection to Arduino')
-            print('')
-            self.arduino = serial.Serial('com7', 9600)
-
-        except Exception as err:
-            print(err)
+        # try:
+        #     print('Openconnection to Arduino')
+        #     print('')
+        #     self.arduino = serial.Serial('com7', 9600)
+        #
+        # except Exception as err:
+        #     print(err)
 
         self.ausgaben_text = ''
         self.ref_img = None
@@ -198,41 +198,34 @@ class Board:
 
     def set_ref_img(self):
 
-        try:
-            print('Openconnection to Cam')
-            print('')
-            cam = cv.VideoCapture(1)
-            ret_val, img = cam.read()
-            # img = cv.rotate(img, cv.ROTATE_270_CLOCKWISE)
-            # img = cv.flip(img, 1)
-            self.ref_img = img
-            cam.release()
-
-        except Exception as err:
-            print(err)
-
-        return self.ref_img
+        cam = cv.VideoCapture('http://192.168.43.1:8080/shot.jpg')
+        ret_val, img = cam.read()
+        self.ref_img = img
+        print(img.shape)
+        cam.release()
 
     def get_ref_img(self):
         self.view_image(self.ref_img, 'Referenzbild')
         return self.ref_img
 
     def set_img(self):
-
-        try:
-            print('Openconnection to Cam')
-            print('')
-            cam = cv.VideoCapture(1)
-            ret_val, img = cam.read()
-            # img = cv.flip(img, 1)
-            self.img = img
-            cam.release()
-
-        except Exception as err:
-            print(err)
-
+        cam = cv.VideoCapture('http://192.168.43.1:8080/shot.jpg')
+        ret_val, img = cam.read()
+        self.img = img
+        cam.release()
         self.ausgaben_text = ''
-        return self.img
+
+        # try:
+        #     print('Openconnection to Cam')
+        #     print('')
+        #     cam = cv.VideoCapture(1)
+        #     ret_val, img = cam.read()
+        #     img = cv.flip(img, 1)
+        #     self.img = img
+        #     cam.release()
+        #
+        # except Exception as err:
+        #     print(err)
 
     def get_img(self):
         self.view_image(self.img, 'Bild')
@@ -243,7 +236,7 @@ class Board:
         # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
         # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
         cv.namedWindow(name, cv.WINDOW_NORMAL)
-        # cv.moveWindow(name, 20, 20)
+        #cv.moveWindow(name, 20, 20)
         cv.resizeWindow(name, 400, 400)
         cv.imshow(name, im)
         cv.waitKey(0)
@@ -318,7 +311,7 @@ class Board:
     def draw_board(self):
         image = self.ref_img.copy()
         for i in self.ellipse:
-            cv.ellipse(image, self.ell_center[i], self.ell_rad[i], 0, 0, 360, (255, 255, 255), 1, cv.LINE_8, 0)
+            cv.ellipse(image, self.ell_center[i], self.ell_rad[i], 0, 0, 360, (0, 0, 255), 1, cv.LINE_8, 0)
 
         for angle in self.zone_angle:
             x2 = int(self.zone_center[0] + self.zone_length * np.cos(np.radians(angle)))
@@ -328,10 +321,10 @@ class Board:
         cv.drawMarker(image, self.point, color=(255, 255, 255), markerType=cv.MARKER_CROSS, thickness=3)
 
         font = cv.FONT_HERSHEY_SIMPLEX
-        org = (60, 160)
-        fontScale = 5
+        org = (60, 100)
+        fontScale = 2
         color = (255, 0, 0)
-        thickness = 10
+        thickness = 8
         cv.putText(image, self.ausgaben_text, org, font, fontScale, color, thickness, cv.LINE_AA)
 
         return image
