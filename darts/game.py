@@ -144,14 +144,13 @@ class Board:
 
     def __init__(self):
 
-        # Arduino
-        # try:
-        #     print('Openconnection to Arduino')
-        #     print('')
-        #     self.arduino = serial.Serial('com7', 9600)
-        #
-        # except Exception as err:
-        #     print(err)
+        try:
+            print('Openconnection to Arduino')
+            print('')
+            self.arduino = serial.Serial('com7', 9600)
+
+        except Exception as err:
+            print(err)
 
         self.text_output = ''
         self.ref_img = None
