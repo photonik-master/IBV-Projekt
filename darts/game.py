@@ -153,7 +153,7 @@ class Board:
         # except Exception as err:
         #     print(err)
 
-        self.ausgaben_text = ''
+        self.text_output = ''
         self.ref_img = None
         self.img = None
 
@@ -213,7 +213,7 @@ class Board:
         ret_val, img = cam.read()
         self.img = img
         cam.release()
-        self.ausgaben_text = ''
+        self.text_output = ''
 
         # try:
         #     print('Openconnection to Cam')
