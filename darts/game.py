@@ -150,6 +150,7 @@ class Board:
             self.arduino = serial.Serial('com7', 9600)
 
         except Exception as err:
+
             print(err)
 
         self.text_output = ''
