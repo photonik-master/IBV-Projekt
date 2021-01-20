@@ -198,7 +198,7 @@ class Board:
 
     def set_ref_img(self):
 
-        cam = cv.VideoCapture('http://192.168.43.1:8080/shot.jpg')
+        cam = cv.VideoCapture('http://.../shot.jpg')
         ret_val, img = cam.read()
         self.ref_img = img
         print(img.shape)
@@ -209,23 +209,23 @@ class Board:
         return self.ref_img
 
     def set_img(self):
-        cam = cv.VideoCapture('http://192.168.43.1:8080/shot.jpg')
+        cam = cv.VideoCapture('http://.../shot.jpg')
         ret_val, img = cam.read()
         self.img = img
         cam.release()
         self.text_output = ''
 
-        # try:
-        #     print('Openconnection to Cam')
-        #     print('')
-        #     cam = cv.VideoCapture(1)
-        #     ret_val, img = cam.read()
-        #     img = cv.flip(img, 1)
-        #     self.img = img
-        #     cam.release()
-        #
-        # except Exception as err:
-        #     print(err)
+        try:
+            print('Openconnection to Cam')
+            print('')
+            cam = cv.VideoCapture(1)
+            ret_val, img = cam.read()
+            img = cv.flip(img, 1)
+            self.img = img
+            cam.release()
+
+        except Exception as err:
+            print(err)
 
     def get_img(self):
         self.view_image(self.img, 'Bild')

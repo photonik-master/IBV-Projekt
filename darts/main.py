@@ -11,10 +11,10 @@ if __name__ == '__main__':
 
     while True:
         if board.detect_shot():
+
             board.set_img()
 
             board.detect_arrow()
-
 
             board.scorer()
 
