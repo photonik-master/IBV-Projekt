@@ -237,7 +237,7 @@ class Board:
         # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
         cv.namedWindow(name, cv.WINDOW_NORMAL)
         # cv.moveWindow(name, 20, 20)
-        cv.resizeWindow(name, 400, 400)
+        #cv.resizeWindow(name, 400, 400)
         cv.imshow(name, im)
         cv.waitKey(0)
         cv.destroyAllWindows()
