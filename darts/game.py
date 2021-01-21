@@ -205,7 +205,7 @@ class Board:
         ret_val, img = self.cam.read()
         self.ref_img = img
         print(img.shape)
-        #cam.release()
+        self.cam.release()
 
     def get_ref_img(self):
         self.view_image(self.ref_img, 'Referenzbild')
@@ -216,6 +216,7 @@ class Board:
         ret_val, img = self.cam.read()
         print(img.shape)
         self.img = img
+        self.cam.release()
 
         #self.camcam.release()
         self.text_output = ''
