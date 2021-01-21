@@ -5,9 +5,10 @@ import time
 import sys
 
 if __name__ == '__main__':
+
     print('Program started')
 
-    board = Board()
+    board = Board('http://.../shot.jpg', 'com7')
 
     board.set_ref_img()
     # board.get_ref_img()
