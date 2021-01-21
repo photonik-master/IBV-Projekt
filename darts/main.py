@@ -6,7 +6,8 @@ import sys
 
 if __name__ == '__main__':
 
-    board = Board()
+    board = Board('http://.../shot.jpg', 'com7')
+
     board.set_ref_img()
     board.get_ref_img()
 

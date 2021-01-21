@@ -142,12 +142,15 @@ class Player:
 
 class Board:
 
-    def __init__(self):
+    def __init__(self, url, com):
+
+        self.com = com
+        self.url = url
 
         try:
             print('Openconnection to Arduino')
             print('')
-            self.arduino = serial.Serial('...', 9600)
+            self.arduino = serial.Serial(self.com, 9600)
 
         except Exception as err:
 
@@ -198,7 +201,7 @@ class Board:
 
     def set_ref_img(self):
 
-        cam = cv.VideoCapture('http://.../shot.jpg')
+        cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
         self.ref_img = img
         print(img.shape)
@@ -209,7 +212,7 @@ class Board:
         return self.ref_img
 
     def set_img(self):
-        cam = cv.VideoCapture('http://.../shot.jpg')
+        cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
         self.img = img
         cam.release()
