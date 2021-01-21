@@ -214,8 +214,8 @@ class Board:
     def set_img(self):
 
         ret_val, img = self.cam.read()
-        print(img.shape)
         self.img = img
+        print(img.shape)
         self.cam.release()
 
         #self.camcam.release()
