@@ -147,7 +147,7 @@ class Board:
         try:
             print('Openconnection to Arduino')
             print('')
-            self.arduino = serial.Serial('com7', 9600)
+            self.arduino = serial.Serial('...', 9600)
 
         except Exception as err:
 
