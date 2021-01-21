@@ -146,16 +146,16 @@ class Board:
 
         self.com = com
         self.url = url
-        self.cam = cv.VideoCapture(self.url)
 
-        try:
-            print('Openconnection to Arduino')
-            print('')
-            self.arduino = serial.Serial(self.com, 9600)
 
-        except Exception as err:
-
-            print(err)
+        # try:
+        #     print('Openconnection to Arduino')
+        #     print('')
+        #     self.arduino = serial.Serial(self.com, 9600)
+        #
+        # except Exception as err:
+        #
+        #     print(err)
 
         self.text_output = ''
         self.ref_img = None
@@ -202,10 +202,11 @@ class Board:
 
     def set_ref_img(self):
 
-        ret_val, img = self.cam.read()
+        cam = cv.VideoCapture(self.url)
+        ret_val, img = cam.read()
         self.ref_img = img
         print(img.shape)
-        self.cam.release()
+        #self.cam.release()
 
     def get_ref_img(self):
         self.view_image(self.ref_img, 'Referenzbild')
@@ -213,10 +214,11 @@ class Board:
 
     def set_img(self):
 
-        ret_val, img = self.cam.read()
+        cam = cv.VideoCapture(self.url)
+        ret_val, img = cam.read()
         self.img = img
         print(img.shape)
-        self.cam.release()
+        #self.cam.release()
 
         #self.camcam.release()
 

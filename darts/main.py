@@ -6,31 +6,37 @@ import sys
 
 if __name__ == '__main__':
 
-    board = Board('http://.../shot.jpg', 'com7')
+    board = Board('http://192.168.43.1:8080/shot.jpg', 'com7')
 
     board.set_ref_img()
     board.get_ref_img()
 
-    while True:
-        if board.detect_shot():
+    cv.waitKey(1)
+    cv.destroyAllWindows()
 
-            board.set_img()
-            board.get_img()
+    #while True:
+        #if board.detect_shot():
 
-            diff, img_contour, img_detected = board.detect_arrow()
+    board.set_img()
+    board.get_img()
 
-            board.view_image(diff, 'Diff')
+    cv.waitKey(1)
+    cv.destroyAllWindows()
 
-            board.view_image(img_contour, 'Contours')
+    diff, img_contour, img_detected = board.detect_arrow()
 
-            board.view_image(img_detected, 'Detected')
+    board.view_image(diff, 'Diff')
 
-            board.scorer()
+    board.view_image(img_contour, 'Contours')
 
-        cv.waitKey(1)
-        cv.destroyAllWindows()
+    board.view_image(img_detected, 'Detected')
 
-        time.sleep(1)
+    board.scorer()
+
+    cv.waitKey(1)
+    cv.destroyAllWindows()
+
+    time.sleep(1)
 
 
 

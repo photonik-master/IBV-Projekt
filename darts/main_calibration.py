@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
     print('Program started')
 
-    board = Board('http://.../shot.jpg', 'com7')
+    board = Board('http://192.168.43.1:8080/shot.jpg', 'com7')
 
     board.set_ref_img()
     # board.get_ref_img()
