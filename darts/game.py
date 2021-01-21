@@ -146,6 +146,7 @@ class Board:
 
         self.com = com
         self.url = url
+        self.cam = cv.VideoCapture(self.url)
 
         try:
             print('Openconnection to Arduino')
@@ -201,34 +202,35 @@ class Board:
 
     def set_ref_img(self):
 
-        cam = cv.VideoCapture(self.url)
-        ret_val, img = cam.read()
+        ret_val, img = self.cam.read()
         self.ref_img = img
         print(img.shape)
-        cam.release()
+        #cam.release()
 
     def get_ref_img(self):
         self.view_image(self.ref_img, 'Referenzbild')
         return self.ref_img
 
     def set_img(self):
-        cam = cv.VideoCapture(self.url)
-        ret_val, img = cam.read()
+
+        ret_val, img = self.cam.read()
+        print(img.shape)
         self.img = img
-        cam.release()
+
+        #self.camcam.release()
         self.text_output = ''
 
-        try:
-            print('Openconnection to Cam')
-            print('')
-            cam = cv.VideoCapture(1)
-            ret_val, img = cam.read()
-            img = cv.flip(img, 1)
-            self.img = img
-            cam.release()
-
-        except Exception as err:
-            print(err)
+        # try:
+        #     print('Openconnection to Cam')
+        #     print('')
+        #     cam = cv.VideoCapture(1)
+        #     ret_val, img = cam.read()
+        #     img = cv.flip(img, 1)
+        #     self.img = img
+        #     cam.release()
+        #
+        # except Exception as err:
+        #     print(err)
 
     def get_img(self):
         self.view_image(self.img, 'Bild')
