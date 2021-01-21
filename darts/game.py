@@ -219,6 +219,7 @@ class Board:
         self.cam.release()
 
         #self.camcam.release()
+
         self.text_output = ''
 
         # try:
