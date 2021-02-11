@@ -7,7 +7,7 @@ import test
 if __name__ == '__main__':
     print('Program started')
 
-    board = Board()
+    board = Board('http://192.168.43.1:8080/shot.jpg', 'com7')
 
     board.ref_img = test.get_IMAGE('/Users/alex/Workspace/git_repos/IBV-Projekt/darts/bilder/arrow_21.png', 0)
     board.get_ref_img()
@@ -19,19 +19,15 @@ if __name__ == '__main__':
     cv.waitKey(1)
     cv.destroyAllWindows()
 
-    diff, img_contour, img_detected = board.detect_arrow()
+    bilder = board.detect_arrow()
+    name = ['perspektive.png', 'diff.png', 'blur.png', 'th.png', 'erosion.png', 'dilation.png', 'closing.png', 'contour.png', 'detected.png']
 
-    board.view_image(diff, 'Differenz')
-    cv.waitKey(1)
-    cv.destroyAllWindows()
+    for i, k in enumerate(bilder):
+        board.view_image(k, name[i])
+        # cv.imwrite(name[i], k)
 
-    board.view_image(img_contour, 'Kontur')
-    cv.waitKey(1)
-    cv.destroyAllWindows()
-
-    board.view_image(img_detected, 'Pfeil')
-    cv.waitKey(1)
-    cv.destroyAllWindows()
+        cv.waitKey(1)
+        cv.destroyAllWindows()
 
     zahl = board.scorer()
     board.ausgaben_text = str(zahl)
@@ -39,5 +35,8 @@ if __name__ == '__main__':
 
     db = board.draw_board()
     board.view_image(db, 'Digital Board')
+
+    # cv.imwrite('digBoard.png', db)
+
     cv.waitKey(1)
     cv.destroyAllWindows()

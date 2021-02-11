@@ -1,66 +1,66 @@
-from game import Game
 from game import Board
 import cv2 as cv
-import time
-import sys
 
 if __name__ == '__main__':
-
     print('Program started')
 
-    board = Board('http://192.168.43.1:8080/shot.jpg', 'com7')
+    board = Board('/dev/cu.usbmodem641', 'http://192.168.43.1:8080/video')
 
     board.set_ref_img()
     # board.get_ref_img()
+    # cv.waitKey(1)
+    # cv.destroyAllWindows()
 
     board.set_img()
     # board.get_img()
-
-    board.ausgaben_text = 'Kalibration'
-
     cv.waitKey(1)
     cv.destroyAllWindows()
 
-    board.ell_center = [(640, 480),
-                        (640, 480),
-                        (640, 480),
-                        (640, 480),
-                        (640, 480),
-                        (640, 480)]
+    board.text_output = 'Kalibration'
+
+    board.ell_angle = [0, 0, -1, -1, 0, -1]
+
+    board.ell_center = [(607, 865),
+                        (607, 862),
+                        (582, 856),
+                        (578, 855),
+                        (542, 848),
+                        (536, 847)]
 
     board.ell_rad = [(20, 20),
-                     (40, 40),
-                     (100, 100),
-                     (120, 120),
-                     (380, 380),
-                     (400, 400)]
+                     (44, 50),
+                     (256, 302),
+                     (283, 333),
+                     (434, 500),
+                     (464, 530)]
 
-    board.zone_center = (640, 480)
-    board.zone_length = 400
+    board.zone_center = (607, 865)
+
+    board.zone_length = 600
+
     # self.zone_angle_offset = None
-    board.zone_angle = [10,
-                        33,
-                        52,
-                        69,
-                        83,
-                        96,
-                        111,
-                        126,
-                        145,
-                        167,
-                        191,
-                        213,
-                        232,
-                        248,
-                        262,
-                        276,
-                        290,
-                        306,
-                        325,
-                        346]
+    board.zone_angle = [14,
+                        35,
+                        53,
+                        70,
+                        86,
+                        101,
+                        117,
+                        134,
+                        153,
+                        174,
+                        195,
+                        215,
+                        233,
+                        250,
+                        266,
+                        281,
+                        297,
+                        314,
+                        333,
+                        354]
 
     db = board.draw_board()
     board.view_image(db, 'digBoard')
-
     cv.waitKey(1)
     cv.destroyAllWindows()

@@ -1,166 +1,32 @@
+from typing import List, Tuple
+
 import checkouts
 import cv2 as cv
 import numpy as np
 import serial
-
-
-class Game:
-    winner = None
-    type = 501
-    players = []
-    board = None
-
-    def __init__(self):
-        self.setUp()
-
-    def setUp(self):
-        print("Willkommen beim FH-Dart-Club")
-
-        print("Welches Spiel? (301 / 501)")
-        answer = int(input())
-        self.setType(answer)
-
-        print("Wie viele Spieler?")
-        answer = int(input())
-        self.setPlayers(answer)
-        self.setBoard()
-        return self
-
-    def setPlayers(self, playerCount):
-        players = []
-        for i in range(1, playerCount + 1):
-            print("Spieler {0}, wie ist dein Name?".format(i))
-            name = input()
-            players.append(Player(name, self.type))
-            print("Hello " + name)
-        self.players = players
-
-    # TODO: Board Initialisierung
-    def setBoard(self):
-        self.board = Board()
-
-    def setType(self, type):
-        self.type = type
-
-    def end(self):
-        print("The Winner is %s" % self.winner.name)
-        print("Game Over.")
-
-    def hasWinner(self):
-        if self.winner is not None:
-            self.end()
-            return True
-        return False
-
-    def hasOutshot(self, score):
-        if str(score) in checkouts.checkouts():
-            outshot = ''
-            for shot in checkouts.checkouts()[str(score)]:
-                outshot += shot + " "
-            print("Outshot: {0}".format(outshot))
-        else:
-            print("Du benötigst noch: {0}".format(score))
-
-
-class Player:
-    tmpScore = None
-    turnTotal = 0
-    game = None
-
-    def __init__(self, name, score):
-        self.name = name
-        self.score = score
-
-    def name(self):
-        return self.name
-
-    def updateScore(self):
-        self.score -= self.turnTotal
-
-    def turn(self, game):
-        self.game = game
-        self.resetTurnTotal()
-        print("{0} ist am Zug, du hast {1} Punkten".format(self.name, self.score))
-        self.tmpScore = self.score
-
-        for dart in range(1, 4):
-            self.throwDart(dart)
-
-            if self.hasBust():
-                return
-
-            if self.hasWon():
-                return
-
-        print("{0} hat {1} Punkte erziehlt".format(self.name, self.turnTotal))
-        print('')
-        self.updateScore()
-
-    def throwDart(self, dart):
-        self.hasOutshot().setTurnTotal(self.getDartScore(dart))
-        print("Erziehlt : {0}".format(self.turnTotal))
-
-    def setTurnTotal(self, dartScore):
-        self.turnTotal += dartScore
-
-    def resetTurnTotal(self):
-        self.turnTotal = 0
-
-    def hasBust(self):
-        if (self.tmpScore - self.turnTotal == 1) or (self.tmpScore - self.turnTotal < 0):
-            print("%s bust!" % self.name)
-            return True
-
-    def getDartScore(self, dart):
-
-        print("Wurf {0} ".format(dart))
-        score = int(input())
-
-        while score > 60:
-            print("Hey Phil Taylor, mehr als 60?! Nochmal...")
-            score = int(input())
-
-        return score
-
-    def hasOutshot(self):
-        if str(self.tmpScore) in checkouts.checkouts():
-            outshot = ''
-            for shot in checkouts.checkouts()[str(self.tmpScore)]:
-                outshot += shot + " "
-            print("Outshot: {0}".format(outshot))
-        else:
-            pass
-            # print("Du benötigst noch {0}".format(self.tmpScore))
-
-        return self
-
-    def hasWon(self):
-        if self.score - self.turnTotal == 0:
-            self.game.winner = self
-            return True
-
+import time
+import sys
 
 class Board:
 
-    def __init__(self, url, com):
+    def __init__(self, com, url):
 
-        self.com = com
+        try:
+            self.ser = serial.Serial(com, 9600)
+            print('Openconnection to Arduino')
+        except serial.SerialException:
+            print('Serial Port Number?')
+            sys.exit(0)
+
         self.url = url
-
-
-        # try:
-        #     print('Openconnection to Arduino')
-        #     print('')
-        #     self.arduino = serial.Serial(self.com, 9600)
-        #
-        # except Exception as err:
-        #
-        #     print(err)
 
         self.text_output = ''
         self.ref_img = None
         self.img = None
 
+        self.calibrate()
+
+    def calibrate(self):
         # digBoard_circle
 
         self.rad = [10, 15, 100, 110, 200, 210]
@@ -169,86 +35,93 @@ class Board:
         self.cir_center = (200, 200)
         self.angle_offset = 9
 
-        self.point = (840, 1160)
+        self.point = (0, 0)
         self.point_new = []
 
         # digBoard_ellipse
 
         self.ellipse = np.arange(0, 6)
+
         self.ellipse_score = [50, 25, 1, 3, 1, 2]
-        self.ell_center = [(840, 1160),
-                           (840, 1160),
-                           (810, 1155),
-                           (810, 1155),
-                           (770, 1155),
-                           (762, 1152)]
 
-        self.ell_rad = [(25, 30),
-                        (55, 70),
-                        (320, 430),
-                        (360, 470),
-                        (535, 710),
-                        (570, 758)]
+        self.ell_angle = [0, 0, -1, -1, 0, -1]
 
-        self.zone_center = (840, 1160)
-        self.zone_length = 800
+        self.ell_center = [(607, 865),
+                           (607, 862),
+                           (582, 856),
+                           (578, 855),
+                           (542, 848),
+                           (536, 847)]
+
+        self.ell_rad = [(20, 20),
+                        (44, 50),
+                        (256, 302),
+                        (283, 333),
+                        (434, 500),
+                        (464, 530)]
+
+        self.zone_center = (607, 865)
+
+        self.zone_length = 600
+
         # self.zone_angle_offset = None
-        self.zone_angle = [10, 33, 52, 69, 83, 96, 111, 126, 145, 167, 191, 213, 232, 248, 262, 276, 290, 306, 325, 346]
 
-    def __del__(self):
-        print('Closeconnection to Arduino')
-        print('')
-        self.arduino.close()
+        self.zone_angle = [15,
+                           36,
+                           54,
+                           70,
+                           86,
+                           101,
+                           117,
+                           134,
+                           153,
+                           174,
+                           195,
+                           215,
+                           233,
+                           249.5,
+                           266,
+                           281,
+                           297,
+                           314,
+                           333,
+                           354]
 
     def set_ref_img(self):
 
         cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
+        #print(type(img))
         self.ref_img = img
-        print(img.shape)
-        #self.cam.release()
+        print('Referenzbild: {0}'.format(img.shape))
+        cam.release()
 
     def get_ref_img(self):
         self.view_image(self.ref_img, 'Referenzbild')
-        return self.ref_img
+        # return self.ref_img
 
     def set_img(self):
 
         cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
         self.img = img
-        print(img.shape)
-        #self.cam.release()
-
-        #self.camcam.release()
-
+        print('Bild: {0}'.format(img.shape))
+        # cam.release()
         self.text_output = ''
-
-        # try:
-        #     print('Openconnection to Cam')
-        #     print('')
-        #     cam = cv.VideoCapture(1)
-        #     ret_val, img = cam.read()
-        #     img = cv.flip(img, 1)
-        #     self.img = img
-        #     cam.release()
-        #
-        # except Exception as err:
-        #     print(err)
 
     def get_img(self):
         self.view_image(self.img, 'Bild')
-        return self.img
+        # return self.img
 
     @staticmethod
     def view_image(im, name):
         # flipped = cv.rotate(frame, cv.ROTATE_90_CLOCKWISE)
         # gray = cv.cvtColor(flipped, cv.COLOR_BGR2GRAY)
         cv.namedWindow(name, cv.WINDOW_NORMAL)
-        # cv.moveWindow(name, 20, 20)
-        #cv.resizeWindow(name, 400, 400)
+        cv.moveWindow(name, 20, 20)
+        cv.resizeWindow(name, 400, 400)
         cv.imshow(name, im)
-        cv.waitKey(0)
+        cv.waitKey(2000)
         cv.destroyAllWindows()
 
     def scorer(self):
@@ -318,23 +191,25 @@ class Board:
                     pass
 
     def draw_board(self):
-        image = self.ref_img.copy()
+
+        image = self.img.copy()
         for i in self.ellipse:
-            cv.ellipse(image, self.ell_center[i], self.ell_rad[i], 0, 0, 360, (0, 0, 255), 1, cv.LINE_8, 0)
+            cv.ellipse(image, self.ell_center[i], self.ell_rad[i], self.ell_angle[i], 0, 360, (255, 255, 255), 1,
+                       cv.LINE_8, 0)
 
         for angle in self.zone_angle:
             x2 = int(self.zone_center[0] + self.zone_length * np.cos(np.radians(angle)))
             y2 = int(self.zone_center[1] + self.zone_length * np.sin(np.radians(angle)))
-            cv.line(image, self.zone_center, (x2, y2), (0, 255, 0), 1, cv.LINE_8, 0)
+            cv.line(image, self.zone_center, (x2, y2), (255, 255, 255), 1, cv.LINE_8, 0)
 
         cv.drawMarker(image, self.point, color=(255, 255, 255), markerType=cv.MARKER_CROSS, thickness=3)
 
         font = cv.FONT_HERSHEY_SIMPLEX
-        org = (60, 100)
-        fontScale = 2
+        org = (20, 100)
+        fontScale = 4
         color = (255, 0, 0)
-        thickness = 8
-        cv.putText(image, self.ausgaben_text, org, font, fontScale, color, thickness, cv.LINE_AA)
+        thickness = 10
+        cv.putText(image, self.text_output, org, font, fontScale, color, thickness, cv.LINE_AA)
 
         return image
 
@@ -370,59 +245,62 @@ class Board:
 
     def detect_shot(self):
 
-        arduino_data = self.arduino.readline()
-        print(arduino_data)
-        decoded_values = str(arduino_data[0:len(arduino_data)].decode("utf-8"))
+        ard = self.ser.readline()
+        self.ser.flush()
 
-        if '1' in decoded_values:
-
+        if ard == b'shot\r\n':
+            print('shot')
+            time.sleep(3)
             self.set_img()
-            arduino_data = 0
-            print('neues Bild')
-            print('')
             return True
-
-        elif '2' in decoded_values:
-
-            self.set_img()
-            arduino_data = 0
-            print('neues Bild')
-            print('')
-            return True
-
         else:
-            print('etwas ist schiefgelaufen :-)')
-            print('')
             return False
 
     def detect_arrow(self):
+
         img1, img2 = cv.cvtColor(self.ref_img, cv.COLOR_BGR2RGB), cv.cvtColor(self.img, cv.COLOR_BGR2RGB)
 
         new_img = self.get_corrected_img(img2, img1)
 
-        # if new_img is not False:
-        #     # print('Bild korregiert')
-        # else:
-        #     # print('Bild nicht korregiert')
+        if new_img is not False:
+            print('Bild korregiert')
+        else:
+            print('Bild nicht korregiert')
+
+        # self.view_image(new_img, 'new_image')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         diff = cv.absdiff(img1, new_img)
+
+        # self.view_image(diff, 'diff')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         grayscale = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
         blur = cv.medianBlur(grayscale, 5)
         ret, th = cv.threshold(blur, 12, 255, cv.THRESH_BINARY)
 
+        # self.view_image(th, 'th')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
+
         kernel = np.ones((5, 5), np.uint8)
         erosion = cv.erode(th, kernel, iterations=1)
         new = cv.dilate(erosion, kernel, iterations=1)
 
-        kernel = np.ones((10, 10), np.uint8)
+        kernel = np.ones((15, 15), np.uint8)
         closing = cv.morphologyEx(new, cv.MORPH_CLOSE, kernel)
+
+        # self.view_image(closing, 'th')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         contours, hierarchy = cv.findContours(closing.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
 
         img_contour = img2.copy()
         for i in range(len(contours)):
-            if 700 < len(contours[i]) < 2500:
+            if 500 < len(contours[i]) < 1500:
                 print('Kontur {0}: {1}'.format(i, len(contours[i])))
                 erg = contours[i]
 
@@ -435,13 +313,18 @@ class Board:
                 img_detected = img2.copy()
                 for cord in c:
                     if cord[2] == 0:
-                        # print(cord)
+                        print(cord)
                         # print(erg[cord[0], cord[1], 0])
                         # print(erg[cord[0], cord[1], 1])
                         self.point_new.append((erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]))
 
                         img_detected = cv.drawMarker(img_detected, (erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]),
                                                      color=(0, 0, 255), markerType=cv.MARKER_CROSS, thickness=10)
+
+                # self.view_image(img_detected, 'detected')
+                # cv.waitKey(1)
+                # cv.destroyAllWindows()
+
             else:
                 pass
 
@@ -457,7 +340,8 @@ class Board:
         self.point = (round(xx / k), round(yy / k))
         print('Auftreffpunkt: {0}'.format(self.point))
 
-        return diff, img_contour, img_detected
+        # return [new_img, diff, blur, th, erosion, new, closing, img_contour, img_detected]
+        # return diff, img_contour, img_detected
 
     def is_inside_ellipse(self, point, center, rad):
         a = ((point[0] - center[0]) ** 2) / (rad[0] ** 2)
