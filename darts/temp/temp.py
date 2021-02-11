@@ -1,9 +1,5 @@
-import checkouts
-import cv2 as cv
-import numpy as np
-import serial
-import time
-import sys
+from temp.temp import checkouts
+
 
 class Game:
     winner = None

@@ -1,4 +1,3 @@
-from game import Game
 from game import Board
 import cv2 as cv
 import time
