@@ -1,8 +1,10 @@
+from calibration import calibration
 import cv2 as cv
 import numpy as np
 import serial
 import time
 import sys
+
 
 class Board:
 
@@ -24,71 +26,75 @@ class Board:
         self.calibrate()
 
     def calibrate(self):
+
+        ell_angle, ell_center, ell_rad, zone_center, zone_length, zone_angle = calibration()
+
+        #
+        # # digBoard_ellipse
+        #
+        # self.ellipse = np.arange(0, 6)
+        #
+        # self.ellipse_score = [50, 25, 1, 3, 1, 2]
+        #
+        # self.ell_angle = [0, 0, -1, -1, 0, -1]
+        #
+        # self.ell_center = [(607, 865),
+        #                    (607, 862),
+        #                    (582, 856),
+        #                    (578, 855),
+        #                    (542, 848),
+        #                    (536, 847)]
+        #
+        # self.ell_rad = [(20, 20),
+        #                 (44, 50),
+        #                 (256, 302),
+        #                 (283, 333),
+        #                 (434, 500),
+        #                 (464, 530)]
+        #
+        # self.zone_center = (607, 865)
+        #
+        # self.zone_length = 600
+        #
+        # # self.zone_angle_offset = None
+        #
+        # self.zone_angle = [15,
+        #                    36,
+        #                    54,
+        #                    70,
+        #                    86,
+        #                    101,
+        #                    117,
+        #                    134,
+        #                    153,
+        #                    174,
+        #                    195,
+        #                    215,
+        #                    233,
+        #                    249.5,
+        #                    266,
+        #                    281,
+        #                    297,
+        #                    314,
+        #                    333,
+        #                    354]
+
         # digBoard_circle
 
-        self.rad = [10, 15, 100, 110, 200, 210]
-        self.cen = None
-        self.line_length = 210
-        self.cir_center = (200, 200)
-        self.angle_offset = 9
+        # self.rad = [10, 15, 100, 110, 200, 210]
+        # self.cen = None
+        # self.line_length = 210
+        # self.cir_center = (200, 200)
+        # self.angle_offset = 9
+        #
+        # self.point = (0, 0)
+        # self.point_new = []
 
-        self.point = (0, 0)
-        self.point_new = []
-
-        # digBoard_ellipse
-
-        self.ellipse = np.arange(0, 6)
-
-        self.ellipse_score = [50, 25, 1, 3, 1, 2]
-
-        self.ell_angle = [0, 0, -1, -1, 0, -1]
-
-        self.ell_center = [(607, 865),
-                           (607, 862),
-                           (582, 856),
-                           (578, 855),
-                           (542, 848),
-                           (536, 847)]
-
-        self.ell_rad = [(20, 20),
-                        (44, 50),
-                        (256, 302),
-                        (283, 333),
-                        (434, 500),
-                        (464, 530)]
-
-        self.zone_center = (607, 865)
-
-        self.zone_length = 600
-
-        # self.zone_angle_offset = None
-
-        self.zone_angle = [15,
-                           36,
-                           54,
-                           70,
-                           86,
-                           101,
-                           117,
-                           134,
-                           153,
-                           174,
-                           195,
-                           215,
-                           233,
-                           249.5,
-                           266,
-                           281,
-                           297,
-                           314,
-                           333,
-                           354]
 
     def set_ref_img(self):
 
         cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
-        #print(type(img))
         self.ref_img = img
         print('Referenzbild: {0}'.format(img.shape))
         cam.release()
@@ -99,12 +105,13 @@ class Board:
 
     def set_img(self):
 
+        self.text_output = ''
+
         cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
         self.img = img
         print('Bild: {0}'.format(img.shape))
-        # cam.release()
-        self.text_output = ''
+        cam.release()
 
     def get_img(self):
         self.view_image(self.img, 'Bild')
