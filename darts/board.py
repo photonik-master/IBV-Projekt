@@ -72,7 +72,7 @@ class Board:
         cv.moveWindow(name, 20, 20)
         cv.resizeWindow(name, 400, 400)
         cv.imshow(name, im)
-        cv.waitKey(2000)
+        cv.waitKey(0)
         cv.destroyAllWindows()
 
     def scorer(self):
@@ -216,38 +216,38 @@ class Board:
             print('Bild nicht korregiert')
             return False
 
-        self.view_image(corrected_img, 'Bildkorrektur')
-        cv.waitKey(1)
-        cv.destroyAllWindows()
+        # self.view_image(corrected_img, 'Bildkorrektur')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         diff = cv.absdiff(img1, corrected_img)
 
-        self.view_image(diff, 'Differenzbild')
-        cv.waitKey(1)
-        cv.destroyAllWindows()
+        # self.view_image(diff, 'Differenzbild')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         # grayscale = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
         blur = cv.medianBlur(diff, 5)
         ret, th = cv.threshold(blur, 20, 255, cv.THRESH_BINARY)
 
-        self.view_image(th, 'Binaerbild')
-        cv.waitKey(1)
-        cv.destroyAllWindows()
+        # self.view_image(th, 'Binaerbild')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         kernel = np.ones((4, 4), np.uint8)
         erosion = cv.erode(th, kernel, iterations=1)
         dilation = cv.dilate(erosion, kernel, iterations=1)
 
-        self.view_image(dilation, 'Erosion/Dilatation')
-        cv.waitKey(1)
-        cv.destroyAllWindows()
+        # self.view_image(dilation, 'Erosion/Dilatation')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         kernel = np.ones((50, 50), np.uint8)
         closing = cv.morphologyEx(dilation, cv.MORPH_CLOSE, kernel)
 
-        self.view_image(closing, 'Closing')
-        cv.waitKey(1)
-        cv.destroyAllWindows()
+        # self.view_image(closing, 'Closing')
+        # cv.waitKey(1)
+        # cv.destroyAllWindows()
 
         contours, hierarchy = cv.findContours(closing.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
 
