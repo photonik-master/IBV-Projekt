@@ -1,5 +1,5 @@
-from game import Game
-from game import Board
+from board import Game
+from board import Board
 import cv2 as cv
 import time
 import test

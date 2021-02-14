@@ -1,5 +1,5 @@
 import serial
-from game import Board
+from board import Board
 import cv2 as cv
 import sys
 import time

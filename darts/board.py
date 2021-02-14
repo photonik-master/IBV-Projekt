@@ -22,74 +22,18 @@ class Board:
         self.text_output = ''
         self.ref_img = None
         self.img = None
-
-        self.calibrate()
-
-    def calibrate(self):
+        self.point = (0, 0)
+        self.point_new = []
 
         ell_angle, ell_center, ell_rad, zone_center, zone_length, zone_angle = calibration()
-
-        #
-        # # digBoard_ellipse
-        #
-        # self.ellipse = np.arange(0, 6)
-        #
-        # self.ellipse_score = [50, 25, 1, 3, 1, 2]
-        #
-        # self.ell_angle = [0, 0, -1, -1, 0, -1]
-        #
-        # self.ell_center = [(607, 865),
-        #                    (607, 862),
-        #                    (582, 856),
-        #                    (578, 855),
-        #                    (542, 848),
-        #                    (536, 847)]
-        #
-        # self.ell_rad = [(20, 20),
-        #                 (44, 50),
-        #                 (256, 302),
-        #                 (283, 333),
-        #                 (434, 500),
-        #                 (464, 530)]
-        #
-        # self.zone_center = (607, 865)
-        #
-        # self.zone_length = 600
-        #
-        # # self.zone_angle_offset = None
-        #
-        # self.zone_angle = [15,
-        #                    36,
-        #                    54,
-        #                    70,
-        #                    86,
-        #                    101,
-        #                    117,
-        #                    134,
-        #                    153,
-        #                    174,
-        #                    195,
-        #                    215,
-        #                    233,
-        #                    249.5,
-        #                    266,
-        #                    281,
-        #                    297,
-        #                    314,
-        #                    333,
-        #                    354]
-
-        # digBoard_circle
-
-        # self.rad = [10, 15, 100, 110, 200, 210]
-        # self.cen = None
-        # self.line_length = 210
-        # self.cir_center = (200, 200)
-        # self.angle_offset = 9
-        #
-        # self.point = (0, 0)
-        # self.point_new = []
-
+        self.ellipse = np.arange(0, 6)
+        self.ellipse_score = [50, 25, 1, 2, 1, 3]
+        self.ell_angle = ell_angle
+        self.ell_center = ell_center
+        self.ell_rad = ell_rad
+        self.zone_center = zone_center
+        self.zone_length = zone_length
+        self.zone_angle = zone_angle
 
     def set_ref_img(self):
 
@@ -106,9 +50,12 @@ class Board:
     def set_img(self):
 
         self.text_output = ''
+        self.point = (0, 0)
+        self.point_new = []
 
         cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
+        #self.img = img[500:1500, 0:1080]
         self.img = img
         print('Bild: {0}'.format(img.shape))
         cam.release()
@@ -133,14 +80,12 @@ class Board:
         theta = None
         for i in self.ellipse:
             if self.is_inside_ellipse(self.point, self.ell_center[i], self.ell_rad[i]) == True:
-                pass
-            else:
-                # print('Ellipse: {0}'.format(i))
+                print('Ellipse: {0}'.format(i))
                 if self.ellipse_score[i] == 50 or self.ellipse_score[i] == 25:
-                    print(self.ellipse_score[i])
+                    # print(self.ellipse_score[i])
                     return self.ellipse_score[i]
                 else:
-                    # print('Multiplikation mit: {0}'.format(self.ellipse_score[i]))
+                    print('Multiplikation mit: {0}'.format(self.ellipse_score[i]))
                     factor = self.ellipse_score[i]
                     dx = self.point[0] - self.zone_center[0]
                     dy = self.point[1] - self.zone_center[1]
@@ -171,32 +116,31 @@ class Board:
                         theta = 0
                         break
                     else:
-                        print('scorer fehler!!!')
+                        pass
+            else:
+                pass
 
         if theta == None:
-            return 'Nicht im Zaehlbereich'
+            return 'Nicht getroffen!'
         else:
             # [10, 33, 52, 69, 83, 96, 111, 126, 145, 167, 191, 213, 232, 248, 262, 276, 290, 306, 325, 346]
             po = [6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5, 20, 1, 18, 4, 13]
             for i, l in enumerate(self.zone_angle):
-                # print(i)
-                # print(l)
-                # print(punkte[i])
                 if theta < l:
-                    # print(po[i] * factor)
                     return po[i] * factor
                 elif theta == l:
                     # TODO: In diesem Fall müssen die Punkte manuell eingetragen werden
-                    pass
+                    return 'Die Punktzahl kann nicht ermittelt werden!'
                 elif self.zone_angle[19] < theta < 360:
-                    # print(po[0])
                     return po[0]
                 else:
                     pass
+                    # print('scorer fehler_1')
 
     def draw_board(self):
 
         image = self.img.copy()
+        # image = np.zeros(self.img.shape, np.uint8)
         for i in self.ellipse:
             cv.ellipse(image, self.ell_center[i], self.ell_rad[i], self.ell_angle[i], 0, 360, (255, 255, 255), 1,
                        cv.LINE_8, 0)
@@ -217,7 +161,7 @@ class Board:
 
         return image
 
-    def get_corrected_img(self, img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst. (korrigiert)
+    def get_corrected_img(self, img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst.
 
         MIN_MATCHES = 50
 
@@ -253,7 +197,7 @@ class Board:
         self.ser.flush()
 
         if ard == b'shot\r\n':
-            print('shot')
+            print('shot!')
             time.sleep(3)
             self.set_img()
             return True
@@ -262,49 +206,54 @@ class Board:
 
     def detect_arrow(self):
 
-        img1, img2 = cv.cvtColor(self.ref_img, cv.COLOR_BGR2RGB), cv.cvtColor(self.img, cv.COLOR_BGR2RGB)
+        img1, img2 = cv.cvtColor(self.ref_img, cv.COLOR_BGR2GRAY), cv.cvtColor(self.img, cv.COLOR_BGR2GRAY)
 
-        new_img = self.get_corrected_img(img2, img1)
+        corrected_img = self.get_corrected_img(img2, img1)
 
-        if new_img is not False:
+        if corrected_img is not False:
             print('Bild korregiert')
         else:
             print('Bild nicht korregiert')
+            return False
 
-        # self.view_image(new_img, 'new_image')
-        # cv.waitKey(1)
-        # cv.destroyAllWindows()
+        self.view_image(corrected_img, 'Bildkorrektur')
+        cv.waitKey(1)
+        cv.destroyAllWindows()
 
-        diff = cv.absdiff(img1, new_img)
+        diff = cv.absdiff(img1, corrected_img)
 
-        # self.view_image(diff, 'diff')
-        # cv.waitKey(1)
-        # cv.destroyAllWindows()
+        self.view_image(diff, 'Differenzbild')
+        cv.waitKey(1)
+        cv.destroyAllWindows()
 
-        grayscale = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
-        blur = cv.medianBlur(grayscale, 5)
-        ret, th = cv.threshold(blur, 12, 255, cv.THRESH_BINARY)
+        # grayscale = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
+        blur = cv.medianBlur(diff, 5)
+        ret, th = cv.threshold(blur, 20, 255, cv.THRESH_BINARY)
 
-        # self.view_image(th, 'th')
-        # cv.waitKey(1)
-        # cv.destroyAllWindows()
+        self.view_image(th, 'Binaerbild')
+        cv.waitKey(1)
+        cv.destroyAllWindows()
 
-        kernel = np.ones((5, 5), np.uint8)
+        kernel = np.ones((4, 4), np.uint8)
         erosion = cv.erode(th, kernel, iterations=1)
-        new = cv.dilate(erosion, kernel, iterations=1)
+        dilation = cv.dilate(erosion, kernel, iterations=1)
 
-        kernel = np.ones((15, 15), np.uint8)
-        closing = cv.morphologyEx(new, cv.MORPH_CLOSE, kernel)
+        self.view_image(dilation, 'Erosion/Dilatation')
+        cv.waitKey(1)
+        cv.destroyAllWindows()
 
-        # self.view_image(closing, 'th')
-        # cv.waitKey(1)
-        # cv.destroyAllWindows()
+        kernel = np.ones((50, 50), np.uint8)
+        closing = cv.morphologyEx(dilation, cv.MORPH_CLOSE, kernel)
+
+        self.view_image(closing, 'Closing')
+        cv.waitKey(1)
+        cv.destroyAllWindows()
 
         contours, hierarchy = cv.findContours(closing.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
 
         img_contour = img2.copy()
         for i in range(len(contours)):
-            if 500 < len(contours[i]) < 1500:
+            if 320 < len(contours[i]) < 800:
                 print('Kontur {0}: {1}'.format(i, len(contours[i])))
                 erg = contours[i]
 
@@ -314,23 +263,9 @@ class Board:
                 b = np.where(erg == a[0][0])
                 c = list(zip(b[0], b[1], b[2]))
 
-                img_detected = img2.copy()
                 for cord in c:
                     if cord[2] == 0:
-                        print(cord)
-                        # print(erg[cord[0], cord[1], 0])
-                        # print(erg[cord[0], cord[1], 1])
                         self.point_new.append((erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]))
-
-                        img_detected = cv.drawMarker(img_detected, (erg[cord[0], cord[1], 0], erg[cord[0], cord[1], 1]),
-                                                     color=(0, 0, 255), markerType=cv.MARKER_CROSS, thickness=10)
-
-                # self.view_image(img_detected, 'detected')
-                # cv.waitKey(1)
-                # cv.destroyAllWindows()
-
-            else:
-                pass
 
         xx = 0
         yy = 0
@@ -340,18 +275,18 @@ class Board:
             yy += i[1]
             k += 1
 
-        # TODO: k==0 kein Kontur
-        self.point = (round(xx / k), round(yy / k))
-        print('Auftreffpunkt: {0}'.format(self.point))
-
-        # return [new_img, diff, blur, th, erosion, new, closing, img_contour, img_detected]
-        # return diff, img_contour, img_detected
+        if k != 0:
+            self.point = (round(xx / k), round(yy / k))
+            print('Auftreffpunkt: {0}'.format(self.point))
+        else:
+            pass
+            # print('Nicht erkannt!')
 
     def is_inside_ellipse(self, point, center, rad):
         a = ((point[0] - center[0]) ** 2) / (rad[0] ** 2)
         b = ((point[1] - center[1]) ** 2) / (rad[1] ** 2)
 
         if (a + b) < 1:
-            return False
-        else:
             return True
+        else:
+            return False
