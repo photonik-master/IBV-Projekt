@@ -55,7 +55,7 @@ class Board:
 
         cam = cv.VideoCapture(self.url)
         ret_val, img = cam.read()
-        #self.img = img[500:1500, 0:1080]
+        # self.img = img[500:1500, 0:1080]
         self.img = img
         print('Bild: {0}'.format(img.shape))
         cam.release()
@@ -161,11 +161,11 @@ class Board:
 
         return image
 
-    def get_corrected_img(self, img1, img2):  # perspektive von bild 2 wird auf bild 1 angepasst.
+    def get_corrected_img(self, img1, img2):
 
         MIN_MATCHES = 50
 
-        orb = cv.ORB_create(nfeatures=500)  # 500 features
+        orb = cv.ORB_create(nfeatures=500)
         kp1, des1 = orb.detectAndCompute(img1, None)
         kp2, des2 = orb.detectAndCompute(img2, None)
 
@@ -180,7 +180,7 @@ class Board:
 
         good_matches = []
         for m, n in matches:
-            if m.distance < 0.75 * n.distance:  # wie gut liegen die features aneinander
+            if m.distance < 0.75 * n.distance:
                 good_matches.append(m)
 
         if len(good_matches) > MIN_MATCHES:
@@ -189,6 +189,7 @@ class Board:
             m, mask = cv.findHomography(src_points, dst_points, cv.RANSAC, 5.0)
             corrected_img = cv.warpPerspective(img1, m, (img2.shape[1], img2.shape[0]))
             return corrected_img
+
         return False
 
     def detect_shot(self):
@@ -278,9 +279,9 @@ class Board:
         if k != 0:
             self.point = (round(xx / k), round(yy / k))
             print('Auftreffpunkt: {0}'.format(self.point))
+            return True
         else:
-            pass
-            # print('Nicht erkannt!')
+            return False
 
     def is_inside_ellipse(self, point, center, rad):
         a = ((point[0] - center[0]) ** 2) / (rad[0] ** 2)

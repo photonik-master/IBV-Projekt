@@ -11,18 +11,19 @@ if __name__ == '__main__':
     while True:
         if board.detect_shot():
             time.sleep(1)
-            board.set_img()
-            board.detect_arrow()
-            board.text_output = str(board.scorer())
-            db = board.draw_board()
-            board.view_image(db, 'digBoard')
-            cv.waitKey(1)
-            cv.destroyAllWindows()
-            board.set_ref_img()
-            i += 1
-            if i == 3:
-                input('Nächste Runde?')
-                i = 0
+            if board.detect_arrow() != False:
+                board.text_output = str(board.scorer())
+                db = board.draw_board()
+                board.view_image(db, 'digBoard')
+                cv.waitKey(1)
+                cv.destroyAllWindows()
                 board.set_ref_img()
+                i += 1
+                if i == 3:
+                    input('Nächste Runde?')
+                    i = 0
+                    board.set_ref_img()
+                else:
+                    pass
         else:
-            pass
+            print('Nicht erkannt!')
